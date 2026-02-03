@@ -1,0 +1,837 @@
+---
+layout: aesthetihawk
+active_tab: groups
+title: Groups Management
+type: issues
+permalink: /student/groups
+comments: false
+---
+
+<div class="min-h-screen bg-neutral-900 py-10">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Subtle Loading Indicator - inline badge style -->
+    <div id="loadingOverlay" class="hidden fixed bottom-4 right-4 z-40 bg-neutral-800/90 backdrop-blur-sm border border-neutral-700 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-md text-xs">
+      <div class="loading-spinner"></div>
+      <span id="loadingText" class="text-gray-400">Loading...</span>
+    </div>
+
+    <!-- Page Title -->
+    <h2 class="text-2xl font-semibold text-white mb-6">Groups Management</h2>
+
+    <!-- Unified Filter Bar -->
+    <div class="bg-neutral-800 border border-neutral-700 rounded-lg shadow-md p-4 mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="text-sm text-gray-300">
+          <span class="font-semibold text-white">Filters</span> · Narrow groups by period and class
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <!-- Period filter dropdown -->
+          <div class="relative" id="periodFilterWrapper">
+            <button id="periodFilterButton" type="button"
+              class="flex items-center gap-2 px-4 py-2 bg-neutral-700 text-gray-200 rounded-lg text-sm border border-neutral-600 hover:bg-neutral-600 transition-colors"
+              onclick="toggleDropdown('period')">
+              <span id="periodFilterLabel">All Periods</span>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div id="periodDropdown"
+              class="hidden absolute right-0 mt-2 w-56 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-20">
+              <div class="p-3 space-y-2 text-sm text-gray-200">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="periodAllCheckbox" type="checkbox" class="accent-indigo-500" checked
+                    onchange="onPeriodAllChange(this)" />
+                  <span>All Periods</span>
+                </label>
+                <div class="border-t border-neutral-700 my-2"></div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 period-checkbox" value="1"
+                    onchange="onPeriodCheckboxChange(this)" />
+                  <span>Period 1</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 period-checkbox" value="2"
+                    onchange="onPeriodCheckboxChange(this)" />
+                  <span>Period 2</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 period-checkbox" value="3"
+                    onchange="onPeriodCheckboxChange(this)" />
+                  <span>Period 3</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 period-checkbox" value="4"
+                    onchange="onPeriodCheckboxChange(this)" />
+                  <span>Period 4</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 period-checkbox" value="5"
+                    onchange="onPeriodCheckboxChange(this)" />
+                  <span>Period 5</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Class filter dropdown -->
+          <div class="relative" id="classFilterWrapper">
+            <button id="classFilterButton" type="button"
+              class="flex items-center gap-2 px-4 py-2 bg-neutral-700 text-gray-200 rounded-lg text-sm border border-neutral-600 hover:bg-neutral-600 transition-colors"
+              onclick="toggleDropdown('class')">
+              <span id="classFilterLabel">All Classes</span>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div id="classDropdown"
+              class="hidden absolute right-0 mt-2 w-56 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-20">
+              <div class="p-3 space-y-2 text-sm text-gray-200">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="classAllCheckbox" type="checkbox" class="accent-indigo-500" checked
+                    onchange="onClassAllChange(this)" />
+                  <span>All Classes</span>
+                </label>
+                <div class="border-t border-neutral-700 my-2"></div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 class-checkbox" value="CSSE"
+                    onchange="onClassCheckboxChange(this)" />
+                  <span>CSSE</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 class-checkbox" value="CSP"
+                    onchange="onClassCheckboxChange(this)" />
+                  <span>CSP</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" class="accent-indigo-500 class-checkbox" value="CSA"
+                    onchange="onClassCheckboxChange(this)" />
+                  <span>CSA</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clear filters -->
+          <button type="button"
+            class="px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-neutral-700 rounded-lg border border-neutral-700 transition-colors"
+            onclick="clearAllFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Groups Display Area -->
+    <div class="bg-neutral-800 border border-neutral-700 rounded-lg shadow-md p-6">
+      <!-- Search bar -->
+      <div class="flex gap-2 mb-6">
+        <input type="text" id="searchInput" placeholder="Search by Group Name"
+          class="flex-1 px-4 py-3 bg-neutral-700 text-white placeholder-gray-400 border border-neutral-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          onkeydown="if(event.key==='Enter') searchGroups()" />
+        <button onclick="searchGroups()"
+          class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors font-medium">
+          Search
+        </button>
+      </div>
+
+      <!-- Add Group Section -->
+      <div id="addGroupSection" class="mb-6 bg-neutral-700 border-2 border-dashed border-neutral-600 rounded-lg p-6">
+        <div id="addGroupCollapsed" class="cursor-pointer" onclick="toggleAddGroup()">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white">Add New Group</h3>
+                <p class="text-sm text-gray-400">Click to create a new group</p>
+              </div>
+            </div>
+            <svg id="addGroupChevron" class="w-6 h-6 text-gray-400 transition-transform" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div id="addGroupExpanded" class="hidden mt-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-200 mb-2">Group Name</label>
+            <input type="text" id="newGroupName" placeholder="Enter group name"
+              class="w-full px-4 py-2 bg-neutral-600 text-white placeholder-gray-400 border border-neutral-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-200 mb-2">Period</label>
+            <select id="newGroupPeriod"
+              class="w-full px-4 py-2 bg-neutral-600 text-white border border-neutral-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Select period</option>
+              <option value="1">Period 1</option>
+              <option value="2">Period 2</option>
+              <option value="3">Period 3</option>
+              <option value="4">Period 4</option>
+              <option value="5">Period 5</option>
+            </select>
+          </div>
+
+          <!-- Class selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-200 mb-2">Class</label>
+            <select id="newGroupClass"
+              class="w-full px-4 py-2 bg-neutral-600 text-white border border-neutral-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="">Select class</option>
+              <option value="CSSE">CSSE</option>
+              <option value="CSP">CSP</option>
+              <option value="CSA">CSA</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 justify-end">
+            <button onclick="cancelAddGroup()"
+              class="px-4 py-2 bg-neutral-600 hover:bg-neutral-500 text-white rounded-lg transition-colors">
+              Cancel
+            </button>
+            <button onclick="saveNewGroup()"
+              class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors">
+              Create Group
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Groups List -->
+      <div id="groupsContainer" class="space-y-3">
+        <!-- Groups will be injected here -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-12 text-gray-400">
+        <svg class="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+          </path>
+        </svg>
+        <p class="text-lg">No groups found</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid #6b7280;
+    border-top-color: #818cf8;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script type="module">
+/* ================================
+   CONFIG
+================================ */
+import { javaURI, pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+
+/* ================================
+   STATE
+================================ */
+let allGroups = [];
+let peopleCache = [];  // Cache people to avoid repeated API calls
+let activePeriods = [];
+let activeClasses = [];
+let loadingCount = 0;  // Track concurrent loading operations
+let isAdmin = false;   // Track if current user is an admin
+let selectedUsersForGroup = {}; // Track multi-select members per group
+
+/* ================================
+   LOADING HELPERS
+================================ */
+function showLoading(message = "Loading...") {
+  loadingCount++;
+  document.getElementById("loadingText").textContent = message;
+  document.getElementById("loadingOverlay").classList.remove("hidden");
+}
+
+function hideLoading() {
+  loadingCount = Math.max(0, loadingCount - 1);
+  if (loadingCount === 0) {
+    document.getElementById("loadingOverlay").classList.add("hidden");
+  }
+}
+
+/* ================================
+   INIT
+================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  initializeData();
+});
+
+// Search groups using API with chaining for better performance
+window.searchGroups = function () {
+  const searchTerm = document.getElementById("searchInput").value.trim();
+  const url = searchTerm 
+    ? `${javaURI}/api/groups/search?name=${encodeURIComponent(searchTerm)}`
+    : `${javaURI}/api/groups`;
+  
+  showLoading("Searching...");
+  
+  fetch(url, fetchOptions)
+    .then(res => res.ok ? res.json() : Promise.reject(new Error("Search failed")))
+    .then(data => {
+      allGroups = data;
+      renderGroups();
+    })
+    .catch(err => console.error("Search failed", err))
+    .finally(() => hideLoading());
+}
+
+// Load groups, people, and admin status in parallel on page load with chaining
+function initializeData() {
+  showLoading("Loading groups...");
+  
+  Promise.all([
+    fetch(`${javaURI}/api/groups`, fetchOptions)
+      .then(res => res.ok ? res.json() : Promise.reject(new Error("Failed to load groups"))),
+    fetch(`${javaURI}/api/people`, fetchOptions)
+      .then(res => res.ok ? res.json() : Promise.reject(new Error("Failed to load people"))),
+    fetch(`${pythonURI}/api/id`, fetchOptions)
+      .then(res => res.ok ? res.json() : null)
+      .catch(() => null)  // Don't fail if user check fails
+  ])
+    .then(([groups, people, user]) => {
+      allGroups = groups;
+      peopleCache = people;
+      isAdmin = user && user.role === "Admin";
+      renderGroups();
+    })
+    .catch(err => console.error("Failed to initialize data", err))
+    .finally(() => hideLoading());
+}
+
+window.parseUIDs = function (raw) {
+  return raw
+    .split("\n")
+    .map(u => u.trim())
+    .filter(Boolean);
+}
+
+// Synchronous lookup from cache - no API call needed
+window.getPersonIdFromUID = function (uid) {
+  const match = peopleCache.find(p => p.uid === uid);
+  if (!match) {
+    throw new Error(`UID not found: ${uid}`);
+  }
+  return match.id;
+};
+
+// Get person object from cache by ID
+window.getPersonById = function (personId) {
+  return peopleCache.find(p => p.id === personId);
+};
+
+// Helpers for multi-select state per group
+function getSelectedUsers(groupId) {
+  return selectedUsersForGroup[groupId] || [];
+}
+
+function setSelectedUsers(groupId, users) {
+  selectedUsersForGroup[groupId] = users;
+  updateAddSelectedButton(groupId);
+  updateSearchResultsSelection(groupId);
+}
+
+// Search for users by name or GitHub ID with chaining
+window.searchPeopleForGroup = function (groupId) {
+  const searchInput = document.getElementById(`member-search-${groupId}`);
+  const query = searchInput.value.trim();
+  
+  if (!query) {
+    alert("Please enter a search term");
+    return;
+  }
+  
+  showLoading("Searching users...");
+  
+  fetch(`${javaURI}/api/people/search?query=${encodeURIComponent(query)}`, fetchOptions)
+    .then(res => res.ok ? res.json() : Promise.reject(new Error("Search failed")))
+    .then(results => displaySearchResults(groupId, results))
+    .catch(err => {
+      console.error("User search failed", err);
+      alert("Failed to search users");
+    })
+    .finally(() => hideLoading());
+}
+
+// Display search results in dropdown
+window.displaySearchResults = function (groupId, results) {
+  const dropdown = document.getElementById(`search-results-${groupId}`);
+  const selected = getSelectedUsers(groupId).map(u => u.id);
+  
+  if (!results || results.length === 0) {
+    dropdown.innerHTML = `
+      <div class="p-3 text-gray-400 text-sm text-center">No users found</div>
+    `;
+    dropdown.classList.remove("hidden");
+    return;
+  }
+  
+  dropdown.innerHTML = results.map(person => {
+    const isSelected = selected.includes(person.id);
+    return `
+      <div 
+        class="px-3 py-2 ${isSelected ? "bg-neutral-600 border border-neutral-500" : "hover:bg-neutral-600"} cursor-pointer flex items-center justify-between text-sm"
+        data-person-id="${person.id}"
+        onclick="toggleUserSelectionFromResult(${groupId}, ${person.id}, '${person.uid}', '${person.name.replace(/'/g, "\\'")}')">
+        <div>
+          <span class="text-white font-medium">${person.name}</span>
+          <span class="text-gray-400 ml-2">@${person.uid}</span>
+        </div>
+        <span class="text-xs ${isSelected ? "text-green-400" : "text-gray-500"}">${isSelected ? "Selected" : "Tap to select"}</span>
+      </div>
+    `;
+  }).join("");
+  
+  dropdown.classList.remove("hidden");
+}
+
+// Toggle user selection from search results
+window.toggleUserSelectionFromResult = function (groupId, personId, uid, name) {
+  const current = getSelectedUsers(groupId);
+  const exists = current.find(u => u.id === personId);
+  const updated = exists
+    ? current.filter(u => u.id !== personId)
+    : [...current, { id: personId, uid, name }];
+  setSelectedUsers(groupId, updated);
+}
+
+// Clear selected users for a group
+window.clearSearchSelection = function (groupId) {
+  setSelectedUsers(groupId, []);
+  const searchInput = document.getElementById(`member-search-${groupId}`);
+  if (searchInput) searchInput.value = "";
+  const dropdown = document.getElementById(`search-results-${groupId}`);
+  if (dropdown) dropdown.classList.add("hidden");
+}
+
+// Add all selected members to group with chaining
+window.addSelectedMembersToGroup = async function (groupId) {
+  const selected = getSelectedUsers(groupId);
+  
+  if (!selected.length) {
+    alert("Please select at least one user");
+    return;
+  }
+  
+  showLoading("Adding members...");
+  const successes = [];
+  const failures = [];
+
+  for (const person of selected) {
+    try {
+      const res = await fetch(`${javaURI}/api/groups/${groupId}/members/${person.id}`, { ...fetchOptions, method: "POST" });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("ADD MEMBER ERROR:", text);
+        failures.push(person);
+        continue;
+      }
+      successes.push(person);
+    } catch (err) {
+      console.error("ADD MEMBER ERROR:", err);
+      failures.push(person);
+    }
+  }
+
+  const group = allGroups.find(g => g.id === groupId);
+  if (group) {
+    if (!group.members) group.members = [];
+    successes.forEach(person => {
+      if (!group.members.find(m => m.id === person.id)) {
+        group.members.push({ id: person.id, name: person.name, uid: person.uid });
+      }
+    });
+  }
+
+  setSelectedUsers(groupId, []);
+  renderGroups();
+  if (failures.length) {
+    alert(`Added ${successes.length} member(s). ${failures.length} failed. Is the user already a member of the group? Check console for details.`);
+  }
+  hideLoading();
+}
+
+// Add member to group with chaining - updates local state instead of refetching
+window.addMemberToGroup = function (groupId, uid) {
+  showLoading("Adding member...");
+  
+  const personId = getPersonIdFromUID(uid);
+  const person = getPersonById(personId);
+  
+  fetch(`${javaURI}/api/groups/${groupId}/members/${personId}`, { ...fetchOptions, method: "POST" })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          console.error("ADD MEMBER ERROR:", text);
+          return Promise.reject(new Error("Failed to add member"));
+        });
+      }
+      return res;
+    })
+    .then(() => {
+      // Update local state instead of refetching all groups
+      const group = allGroups.find(g => g.id === groupId);
+      if (group) {
+        if (!group.members) group.members = [];
+        // Only add if not already present
+        if (!group.members.find(m => m.id === personId)) {
+          group.members.push({ id: personId, name: person?.name || uid, uid: uid });
+        }
+      }
+      renderGroups();
+    })
+    .catch(err => alert(err.message))
+    .finally(() => hideLoading());
+}
+
+// Remove member from group with chaining - updates local state instead of refetching
+window.removeMemberFromGroup = function (groupId, personId) {
+  showLoading("Removing member...");
+  
+  fetch(`${javaURI}/api/groups/${groupId}/members/${personId}`, { ...fetchOptions, method: "DELETE" })
+    .then(res => res.ok ? res : Promise.reject(new Error("Failed to remove member")))
+    .then(() => {
+      // Update local state instead of refetching all groups
+      const group = allGroups.find(g => g.id === groupId);
+      if (group && group.members) {
+        group.members = group.members.filter(m => m.id !== personId);
+      }
+      renderGroups();
+    })
+    .catch(err => alert(err.message))
+    .finally(() => hideLoading());
+}
+
+// Open group chat with placeholder functionality
+window.openGroupChat = function (groupId, groupName) {
+  const group = allGroups.find(g => g.id === groupId);
+  if (!group || !group.members || group.members.length === 0) {
+    alert(`No members in ${groupName} to chat with`);
+    return;
+  }
+  
+  // TODO: Implement chat functionality
+  // This is a placeholder for chat integration
+  console.log(`Opening chat for group: ${groupName} (ID: ${groupId})`);
+  console.log("Group members:", group.members);
+  
+  // Example placeholder action:
+  alert(`Chat feature coming soon for ${groupName}!\nMembers: ${group.members.map(m => m.name).join(", ")}`);
+}
+
+// Delete group with chaining - updates local state instead of refetching
+window.deleteGroup = function (groupId) {
+  const confirmed = confirm(
+    "Are you sure you want to delete this group?\n\nThis action cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  showLoading("Deleting group...");
+  
+  fetch(`${javaURI}/api/groups/${groupId}`, { ...fetchOptions, method: "DELETE" })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          console.error("DELETE GROUP ERROR:", text);
+          alert("Failed to delete group");
+          return Promise.reject(new Error("Failed to delete group"));
+        });
+      }
+      return res;
+    })
+    .then(() => {
+      // Update local state instead of refetching all groups
+      allGroups = allGroups.filter(g => g.id !== groupId);
+      renderGroups();
+    })
+    .catch(err => console.error(err))
+    .finally(() => hideLoading());
+};
+
+
+
+/* ================================
+   API CALLS
+================================ */
+// Manual refresh function with chaining - only call when absolutely needed
+window.loadGroups = function () {
+  fetch(`${javaURI}/api/groups`, fetchOptions)
+    .then(res => res.ok ? res.json() : Promise.reject(new Error("Failed to load groups")))
+    .then(data => {
+      allGroups = data;
+      renderGroups();
+    })
+    .catch(err => console.error("Failed to load groups", err));
+}
+
+// Refresh people cache with chaining if needed (e.g., new user registered)
+window.refreshPeopleCache = function () {
+  fetch(`${javaURI}/api/people`, fetchOptions)
+    .then(res => res.ok ? res.json() : Promise.reject(new Error("Failed to refresh people")))
+    .then(data => { peopleCache = data; })
+    .catch(err => console.error("Failed to refresh people cache", err));
+}
+
+// Create new group with chaining (single API call)
+window.saveNewGroup = function () {
+  const name = document.getElementById("newGroupName").value.trim();
+  const period = document.getElementById("newGroupPeriod").value;
+  const course = document.getElementById("newGroupClass").value;
+
+  if (!name || !period || !course) {
+    alert("Please fill all required fields.");
+    return;
+  }
+
+  showLoading("Creating group...");
+  
+  fetch(`${javaURI}/api/groups`, {
+    ...fetchOptions,
+    method: "POST",
+    body: JSON.stringify({ name, period: String(period), course })
+  })
+    .then(res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          console.error("GROUP CREATION ERROR:", text);
+          return Promise.reject(new Error("Group creation failed"));
+        });
+      }
+      return res.json();
+    })
+    .then(newGroup => {
+      newGroup.members = [];
+      // Update local state instead of refetching
+      allGroups.push(newGroup);
+      cancelAddGroup();
+      renderGroups();
+    })
+    .catch(err => {
+      console.error(err);
+      alert(err.message);
+    })
+    .finally(() => hideLoading());
+};
+
+
+
+/* ================================
+   RENDERING
+================================ */
+window.renderGroups = function () {
+  const container = document.getElementById("groupsContainer");
+  const empty = document.getElementById("emptyState");
+
+  container.innerHTML = "";
+
+  // Only filter by period/class (search is handled by API)
+  const filtered = allGroups.filter(g => {
+    if (activePeriods.length && !activePeriods.includes(String(g.period))) return false;
+    if (activeClasses.length && !activeClasses.includes(g.course)) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    empty.classList.remove("hidden");
+    return;
+  }
+
+  empty.classList.add("hidden");
+
+  filtered.forEach(group => {
+    const el = document.createElement("div");
+    el.className = "bg-neutral-700 rounded-lg p-4 border border-neutral-600";
+
+    el.innerHTML = `
+      <!-- Header -->
+      <div class="flex justify-between items-start">
+        <div>
+          <h4 class="text-lg font-semibold text-white">${group.name}</h4>
+          <p class="text-sm text-gray-400">
+            Period ${group.period} · ${group.course}
+          </p>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex gap-2">
+          <!-- Chat button -->
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded bg-neutral-600 hover:bg-green-600 text-gray-300 hover:text-white transition-colors"
+            title="Chat with group members"
+            onclick="openGroupChat(${group.id}, '${group.name.replace(/'/g, "\\'")}')" >
+            💬
+          </button>
+
+          <!-- Trash (admin only) -->
+          ${isAdmin ? `
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded bg-neutral-600 hover:bg-red-600 text-gray-300 hover:text-white transition-colors"
+            title="Delete group (Admin only)"
+            onclick="deleteGroup(${group.id})">
+            🗑️
+          </button>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Members row -->
+      <div class="mt-3 flex flex-wrap gap-2">
+        ${(group.members || []).map(m => `
+          <span 
+            class="group px-3 py-1 bg-neutral-600 hover:bg-red-600 text-sm text-gray-200 rounded-full cursor-pointer transition-colors"
+            onclick="removeMemberFromGroup(${group.id}, ${m.id})"
+            title="Click to remove">
+            <span class="group-hover:hidden">${m.name} <span class="text-gray-400">@${m.uid}</span></span>
+            <span class="hidden group-hover:inline">Remove ${m.uid}</span>
+          </span>
+        `).join("")}
+      </div>
+
+      <!-- Add member by search -->
+      <div class="mt-4 relative">
+        <div class="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Search by full name"
+            class="flex-1 px-3 py-2 bg-neutral-600 text-white text-sm rounded-lg border border-neutral-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            id="member-search-${group.id}"
+            onkeydown="if(event.key==='Enter') searchPeopleForGroup(${group.id})"
+            oninput="if(!this.value.trim()) document.getElementById('search-results-${group.id}').classList.add('hidden')"
+          />
+
+          <!-- Search button -->
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+            title="Search users"
+            onclick="searchPeopleForGroup(${group.id})">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </button>
+
+          <!-- Add selected user -->
+          <button
+            id="add-selected-btn-${group.id}"
+            class="px-4 h-10 flex items-center justify-center rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Add selected members"
+            onclick="addSelectedMembersToGroup(${group.id})"
+            disabled>
+            Add Selected
+          </button>
+        </div>
+
+        <!-- Search results dropdown -->
+        <div 
+          id="search-results-${group.id}" 
+          class="hidden absolute left-0 right-12 mt-1 bg-neutral-700 border border-neutral-600 rounded-lg shadow-lg z-30 max-h-48 overflow-y-auto">
+        </div>
+      </div>
+    `;
+    container.appendChild(el);
+    updateAddSelectedButton(group.id);
+  });
+}
+
+// Update add button label/state based on selection count
+function updateAddSelectedButton(groupId) {
+  const btn = document.getElementById(`add-selected-btn-${groupId}`);
+  if (!btn) return;
+  const count = getSelectedUsers(groupId).length;
+  btn.textContent = count ? `Add Selected (${count})` : "Add Selected";
+  btn.disabled = count === 0;
+}
+
+// Highlight selected rows in search dropdown after rerender
+function updateSearchResultsSelection(groupId) {
+  const dropdown = document.getElementById(`search-results-${groupId}`);
+  if (!dropdown) return;
+  const selectedIds = getSelectedUsers(groupId).map(u => u.id);
+  dropdown.querySelectorAll("[data-person-id]").forEach(item => {
+    const id = Number(item.dataset.personId);
+    const isSelected = selectedIds.includes(id);
+    item.classList.toggle("bg-neutral-600", isSelected);
+    item.classList.toggle("border", isSelected);
+  });
+}
+
+/* ================================
+   ADD GROUP TOGGLE
+================================ */
+window.toggleAddGroup = function () {
+  document.getElementById("addGroupExpanded").classList.toggle("hidden");
+  document.getElementById("addGroupChevron").classList.toggle("rotate-180");
+}
+
+window.cancelAddGroup = function () {
+  document.getElementById("addGroupExpanded").classList.add("hidden");
+  document.getElementById("newGroupName").value = "";
+  document.getElementById("newGroupPeriod").value = "";
+  document.getElementById("newGroupClass").value = "";
+}
+
+/* ================================
+   FILTERS
+================================ */
+window.toggleDropdown = function (type) {
+  document.getElementById(type + "Dropdown").classList.toggle("hidden");
+}
+
+window.clearAllFilters = function () {
+  activePeriods = [];
+  activeClasses = [];
+  document.querySelectorAll(".period-checkbox,.class-checkbox").forEach(cb => cb.checked = false);
+  document.getElementById("periodAllCheckbox").checked = true;
+  document.getElementById("classAllCheckbox").checked = true;
+  document.getElementById("periodFilterLabel").textContent = "All Periods";
+  document.getElementById("classFilterLabel").textContent = "All Classes";
+  document.getElementById("searchInput").value = "";
+  searchGroups();  // Reload all groups
+}
+
+window.onPeriodCheckboxChange = function (cb) {
+  activePeriods = [...document.querySelectorAll(".period-checkbox:checked")].map(c => c.value);
+  document.getElementById("periodAllCheckbox").checked = !activePeriods.length;
+  document.getElementById("periodFilterLabel").textContent =
+    activePeriods.length ? `Periods: ${activePeriods.join(", ")}` : "All Periods";
+  renderGroups();
+}
+
+window.onClassCheckboxChange = function (cb) {
+  activeClasses = [...document.querySelectorAll(".class-checkbox:checked")].map(c => c.value);
+  document.getElementById("classAllCheckbox").checked = !activeClasses.length;
+  document.getElementById("classFilterLabel").textContent =
+    activeClasses.length ? `Classes: ${activeClasses.join(", ")}` : "All Classes";
+  renderGroups();
+}
+
+window.onPeriodAllChange = function (cb) {
+  if (cb.checked) {
+    document.querySelectorAll(".period-checkbox").forEach(c => c.checked = false);
+    activePeriods = [];
+    renderGroups();
+  }
+}
+
+window.onClassAllChange = function (cb) {
+  if (cb.checked) {
+    document.querySelectorAll(".class-checkbox").forEach(c => c.checked = false);
+    activeClasses = [];
+    renderGroups();
+  }
+}
+</script>
