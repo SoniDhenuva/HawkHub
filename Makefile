@@ -117,7 +117,7 @@ serve-yat: use-yat clean
 	@make serve-current
 
 # General serve target (uses whatever is in _config.yml/Gemfile)
-serve-current: stop convert split-courses jekyll-serve
+serve-current: stop jekyll-serve
 
 # Build with selected theme
 build-minima: use-minima build-current
@@ -126,7 +126,7 @@ build-cayman: use-cayman build-current
 build-so-simple: use-so-simple build-current
 build-yat: use-yat build-current
 
-build-current: clean convert split-courses
+build-current: clean
 	@bundle install
 	@bundle exec jekyll clean
 	@bundle exec jekyll build
@@ -140,9 +140,9 @@ split-courses:
 	@echo " ------ Splitting multi-course files... -------"
 	@python3 scripts/split_multi_course_files.py
 
-clean-courses:
-	@echo "🧹 Cleaning course-specific files..."
-	@python3 scripts/split_multi_course_files.py clean
+# clean-courses:
+#	@echo "🧹 Cleaning course-specific files..."
+#	@python3 scripts/split_multi_course_files.py clean
 
 # Notebook and DOCX conversion
 convert: $(MARKDOWN_FILES) convert-docx
@@ -212,8 +212,8 @@ clean: stop
 	@find _posts -type f -name '*_GithubIssue_.md' -exec rm {} +
 	@echo "Cleaning converted DOCX files..."
 	@find _posts -type f -name '*_DOCX_.md' -exec rm {} + 2>/dev/null || true
-	@echo "Cleaning course-specific files..."
-	@make clean-courses
+#	@echo "Cleaning course-specific files..."
+#	@make clean-courses
 	@echo "Cleaning extracted DOCX images..."
 	@rm -rf images/docx/*.png images/docx/*.jpg images/docx/*.jpeg images/docx/*.gif 2>/dev/null || true
 	@echo "Cleaning DOCX index page..."
