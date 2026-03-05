@@ -22,7 +22,7 @@ search_exclude: true
   }
 
   .home-shell {
-    background: #0b1e34;
+    background: #091a2e;
     min-height: 100vh;
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -32,7 +32,7 @@ search_exclude: true
   }
 
   .home-sidebar {
-    background: #0a182a;
+    background: #081526;
     padding: 1.3rem 0.8rem;
   }
 
@@ -54,7 +54,7 @@ search_exclude: true
 
   .home-main {
     padding: 2rem;
-    background: #0b1e34;
+    background: #091a2e;
   }
 
   .home-top {
