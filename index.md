@@ -90,9 +90,9 @@ search_exclude: true
   }
 
   .club-card .thumb {
-    flex: 1;
-    min-height: 130px;
+    height: 300px;
     overflow: hidden;
+    flex-shrink: 0;
   }
 
   .club-card .thumb img {
@@ -171,7 +171,7 @@ search_exclude: true
         <div class="name">HOSA</div>
       </a>
       <a class="club-card alt" href="{{site.baseurl}}/search">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Speech and Debate"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/speech_and_debate.png" alt="Speech and Debate"></div>
         <div class="name">SPEECH &amp; DEBATE</div>
       </a>
       <a class="club-card" href="{{site.baseurl}}/search">
@@ -183,8 +183,8 @@ search_exclude: true
         <div class="name">DECA</div>
       </a>
       <a class="club-card" href="{{site.baseurl}}/search">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/add.png" alt="Add Club"></div>
-        <div class="name">ADD CLUB</div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/girls_in_cs.png" alt="Girls In CS"></div>
+        <div class="name">Girls In CS</div>
       </a>
     </div>
   </main>
