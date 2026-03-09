@@ -91,7 +91,15 @@ search_exclude: true
 
   .club-card .thumb {
     flex: 1;
-    background: linear-gradient(120deg, #2d6f87, #163849);
+    min-height: 130px;
+    overflow: hidden;
+  }
+
+  .club-card .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .club-card .name {
@@ -155,27 +163,27 @@ search_exclude: true
 
     <div class="club-grid">
       <a class="club-card alt" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/optix.png" alt="FRC Team Optix 3749"></div>
         <div class="name">FRC TEAM OPTIX 3749</div>
       </a>
       <a class="club-card" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/hosa.png" alt="HOSA"></div>
         <div class="name">HOSA</div>
       </a>
       <a class="club-card alt" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Speech and Debate"></div>
         <div class="name">SPEECH &amp; DEBATE</div>
       </a>
       <a class="club-card" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Mock Trial"></div>
         <div class="name">MOCK TRIAL</div>
       </a>
       <a class="club-card alt" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/deca.png" alt="DECA"></div>
         <div class="name">DECA</div>
       </a>
       <a class="club-card" href="{{site.baseurl}}/search">
-        <div class="thumb"></div>
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/add.png" alt="Add Club"></div>
         <div class="name">ADD CLUB</div>
       </a>
     </div>
