@@ -4,7 +4,7 @@
             {%- assign page_paths = site.minima.nav_pages | default: default_paths -%}
             {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
             <a class="site-title hawkhub-title" rel="author" href="{{ '/' | relative_url }}" data-value="{{ site.title | escape }}">
-                <span class="hawk">HAWK</span><span class="nest">Nest</span>
+                <span class="hawk">HAWK</span><span class="hub">Hub</span>
             </a>
 
             {%- if titles_size > 0 -%}
@@ -58,7 +58,7 @@
                 margin-right: 0.2rem;
             }
 
-            .hawkhub-title .nest {
+            .hawkhub-title .hub {
                 color: #1d9ad2;
                 font-style: italic;
                 font-weight: 500;
