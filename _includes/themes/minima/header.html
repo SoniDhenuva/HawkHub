@@ -1,9 +1,9 @@
-    <header class="site-header hawknest-header">
+    <header class="site-header hawkhub-header">
         <div class="wrapper">
             {%- assign default_paths = site.pages | map: "path" -%}
             {%- assign page_paths = site.minima.nav_pages | default: default_paths -%}
             {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
-            <a class="site-title hawknest-title" rel="author" href="{{ '/' | relative_url }}" data-value="{{ site.title | escape }}">
+            <a class="site-title hawkhub-title" rel="author" href="{{ '/' | relative_url }}" data-value="{{ site.title | escape }}">
                 <span class="hawk">HAWK</span><span class="nest">Nest</span>
             </a>
 
@@ -30,22 +30,22 @@
     </header>
 
         <style>
-            .site-header.hawknest-header {
+            .site-header.hawkhub-header {
                 background: #061020;
                 border-bottom: 1px solid #0d2744;
             }
 
-            .hawknest-header .wrapper {
+            .hawkhub-header .wrapper {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
             }
 
-            .hawknest-header .page-link {
+            .hawkhub-header .page-link {
                 color: #cde8ff;
             }
 
-            .hawknest-title {
+            .hawkhub-title {
                 font-family: 'Orbitron', sans-serif;
                 font-size: clamp(1.8rem, 3.2vw, 2.8rem);
                 font-weight: 800;
@@ -53,12 +53,12 @@
                 text-decoration: none !important;
             }
 
-            .hawknest-title .hawk {
+            .hawkhub-title .hawk {
                 color: #39b226;
                 margin-right: 0.2rem;
             }
 
-            .hawknest-title .nest {
+            .hawkhub-title .nest {
                 color: #1d9ad2;
                 font-style: italic;
                 font-weight: 500;
