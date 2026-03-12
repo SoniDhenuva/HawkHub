@@ -7,64 +7,43 @@ document.addEventListener('DOMContentLoaded', function () {
     waitForElement('#loginArea', 20, 100).then(loginArea => {
         getCredentials(baseurl)
             .then(data => {
-                console.log("Credentials data:", data); // Debugging line
-                window.user = data;
-                // Always show guest dropdown
-                    loginArea.innerHTML = `
-                        <div class="dropdown">
-                            <button class="dropbtn page-link" style="border:none; background:none; cursor:pointer; color:inherit; font-size:inherit; font-family:inherit; padding:0;">Guest</button>
-                            <div class="dropdown-content hidden">
-                                <a href="${baseurl}/login">Login</a>
-                                <a href="${baseurl}/profile">Profile</a>
-                            </div>
+                console.log("Guest mode activated");
+                window.user = data; // Guest data
+                loginArea.innerHTML = `
+                    <div class="dropdown">
+                        <button class="dropbtn page-link" style="border:none; background:none; cursor:pointer; color:inherit; font-size:inherit; font-family:inherit; padding:0;">Guest</button>
+                        <div class="dropdown-content hidden">
+                            <a href="${baseurl}/login">Login</a>
+                            <a href="${baseurl}/profile">Profile</a>
                         </div>
-                    `;
+                    </div>
+                `;
 
-                    // Add click event listener for dropdown toggle
-                    const dropdownButton = loginArea.querySelector('.dropbtn');
-                    const dropdownContent = loginArea.querySelector('.dropdown-content');
-
-                    if (dropdownButton && dropdownContent) {
-                        dropdownButton.addEventListener('click', (event) => {
-                            event.preventDefault(); // Prevent redirection
-                            dropdownContent.classList.toggle('hidden');
+                // Dropdown toggle
+                const dropdownButton = loginArea.querySelector('.dropbtn');
+                const dropdownContent = loginArea.querySelector('.dropdown-content');
+                if (dropdownButton && dropdownContent) {
+                    dropdownButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        dropdownContent.classList.toggle('hidden');
+                    });
+                    if (!window._loginDropdownListener) {
+                        document.addEventListener('click', (e) => {
+                            if (!dropdownButton.contains(e.target) && !dropdownContent.contains(e.target)) {
+                                dropdownContent.classList.add('hidden');
+                            }
                         });
-
-                        // Prevent multiple listeners by using a flag
-                        if (!window._loginDropdownListener) {
-                            document.addEventListener('click', (event) => {
-                                if (!dropdownButton.contains(event.target) && !dropdownContent.contains(event.target)) {
-                                    dropdownContent.classList.add('hidden'); // Hide dropdown
-                                }
-                            });
-                            window._loginDropdownListener = true;
-                        }
+                        window._loginDropdownListener = true;
                     }
+                }
 
-                    // Update navigation for guest (treat as logged in with defaults)
-                    waitForElement('.trigger', 20, 100).then(() => {
-                        updateNavigation(true); // Use logged-in nav logic with defaults
-                    });
-                } else {
-                    // User is not authenticated, then "Login" link is shown
-                    loginArea.innerHTML = `<a href="${baseurl}/login">Login</a>`;
-                    waitForElement('.trigger', 20, 100).then(() => {
-                        updateNavigation(false); // User is not logged in
-                    });
-                }
-                // Set loginArea opacity to 1
-                loginArea.style.opacity = "1";
-            })
-            .catch(err => {
-                console.error("Error fetching credentials: ", err);
-                // Show login link on error
-                if (loginArea) {
-                    loginArea.innerHTML = `<a href="${baseurl}/login">Login</a>`;
-                }
+                // Update nav
                 waitForElement('.trigger', 20, 100).then(() => {
-                    updateNavigation(false); // Also update nav on error
+                    updateNavigation(true);
                 });
+                loginArea.style.opacity = "1";
             });
+
     });
 });
 
