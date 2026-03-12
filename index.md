@@ -321,29 +321,12 @@ search_exclude: true
   </main>
 </section>
 
-<script type="module">
-  import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
-
-  const loggedOutHome = document.getElementById("logged-out-home");
-  const loggedInHome = document.getElementById("logged-in-home");
-
-  async function isLoggedIn() {
-    try {
-      const response = await fetch(`${pythonURI}/api/id`, fetchOptions);
-      if (!response.ok) return false;
-      const data = await response.json();
-      return Boolean(data && (data.uid || data.name));
-    } catch {
-      return false;
-    }
-  }
-
-  const authenticated = await isLoggedIn();
-  if (authenticated) {
-    loggedOutHome.style.display = "none";
-    loggedInHome.style.display = "grid";
-  } else {
-    loggedOutHome.style.display = "block";
-    loggedInHome.style.display = "none";
-  }
+<script>
+  // Bypass login: always show full clubs dashboard on main page
+  document.addEventListener('DOMContentLoaded', function() {
+    const loggedOutHome = document.getElementById("logged-out-home");
+    const loggedInHome = document.getElementById("logged-in-home");
+    if (loggedOutHome) loggedOutHome.style.display = 'none';
+    if (loggedInHome) loggedInHome.style.display = 'grid';
+  });
 </script>
