@@ -296,8 +296,8 @@ search_exclude: true
   <main class="home-main">
     <div class="home-top">
       <select class="home-sort" aria-label="Sort clubs">
-        <option>SORT BY</option>
-        <option>Advocacy/Awarness</option>
+        <option>All Clubs</option>
+        <option>Advocacy/Awareness</option>
         <option>STEM</option>
         <option>Charity/Volunteer</option>
         <option>Arts</option>
@@ -308,29 +308,41 @@ search_exclude: true
     </div>
 
   <div class="club-grid">
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="STEM,Competition">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="STEM,Competition,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/optix.png" alt="FRC Team Optix 3749"></div>
         <div class="name">FRC TEAM OPTIX 3749</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,Competition">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,Competition,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/hosa.png" alt="HOSA"></div>
         <div class="name">HOSA</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/speech_and_debate.png" alt="Speech and Debate"></div>
         <div class="name">SPEECH &amp; DEBATE</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="Competition">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Mock Trial"></div>
         <div class="name">MOCK TRIAL</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/deca.png" alt="DECA"></div>
         <div class="name">DECA</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/girls_in_cs.png" alt="Girls In CS"></div>
         <div class="name">Girls In CS</div>
+      </a>
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Cultural/Society,All Clubs">
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/sacs.png" alt="South Asian Cultural Show"></div>
+        <div class="name">South Asian Cultural Show</div>
+      </a>
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="Advocacy/Awareness,All Clubs">
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/acs.png" alt="American Cancer Society"></div>
+        <div class="name">American Cancer Society</div>
+      </a>
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Charity/Volunteer,All Clubs">
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/link_crew.png" alt="Link Crew"></div>
+        <div class="name">Link Crew</div>
       </a>
     </div>
     <div id="no-clubs" class="no-clubs-msg" style="display: none; grid-column: 1 / -1; text-align: center; padding: 2rem; color: #ccc; font-size: 1.2rem;">No clubs in this category yet!</div>
@@ -356,16 +368,13 @@ search_exclude: true
     function filterClubs(category) {
       let visibleCount = 0;
       clubCards.forEach(card => {
-        card.classList.remove('hidden');
-        if (category && category !== 'SORT BY') {
-          const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
-          if (!categories.includes(category)) {
-            card.classList.add('hidden');
-          } else {
-            visibleCount++;
-          }
+        const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
+        const shouldShow = !category || category === 'SORT BY' || categories.includes(category);
+        if (shouldShow) {
+          card.classList.remove('hidden');
+          visibleCount++;
         } else {
-          visibleCount += clubCards.length;
+          card.classList.add('hidden');
         }
       });
       noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
