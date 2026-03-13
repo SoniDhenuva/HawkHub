@@ -334,4 +334,45 @@ search_exclude: true
     if (loggedOutHome) loggedOutHome.style.display = 'none';
     if (loggedInHome) loggedInHome.style.display = 'grid';
   });
+
+  // Club filtering functionality
+  function initClubFilter() {
+    const sortSelect = document.querySelector('.home-sort');
+    const clubGrid = document.querySelector('.club-grid');
+    const noClubsMsg = document.getElementById('no-clubs');
+    const clubCards = document.querySelectorAll('.club-card');
+
+    function filterClubs(category) {
+      let visibleCount = 0;
+      clubCards.forEach(card => {
+        card.classList.remove('hidden');
+        if (category && category !== 'SORT BY') {
+          const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
+          if (!categories.includes(category)) {
+            card.classList.add('hidden');
+          } else {
+            visibleCount++;
+          }
+        } else {
+          visibleCount += clubCards.length;
+        }
+      });
+      noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    sortSelect.addEventListener('change', (e) => {
+      filterClubs(e.target.value);
+    });
+
+    // Initial state: show all
+    filterClubs('SORT BY');
+  }
+
+  // Init filter after DOM ready (async safe)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initClubFilter);
+  } else {
+    initClubFilter();
+  }
+  
 </script>
