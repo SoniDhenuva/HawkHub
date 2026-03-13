@@ -220,8 +220,18 @@ search_exclude: true
     letter-spacing: 0.02em;
   }
 
-  .club-card.alt .name {
+.club-card.alt .name {
     background: #17536a;
+  }
+
+  .club-card {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .club-card.hidden {
+    display: none;
+    opacity: 0;
+    transform: scale(0.95);
   }
 
   @media (max-width: 900px) {
@@ -297,32 +307,33 @@ search_exclude: true
       </select>
     </div>
 
-    <div class="club-grid">
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+  <div class="club-grid">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="STEM,Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/optix.png" alt="FRC Team Optix 3749"></div>
         <div class="name">FRC TEAM OPTIX 3749</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/hosa.png" alt="HOSA"></div>
         <div class="name">HOSA</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/speech_and_debate.png" alt="Speech and Debate"></div>
         <div class="name">SPEECH &amp; DEBATE</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Mock Trial"></div>
         <div class="name">MOCK TRIAL</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/deca.png" alt="DECA"></div>
         <div class="name">DECA</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/girls_in_cs.png" alt="Girls In CS"></div>
         <div class="name">Girls In CS</div>
       </a>
     </div>
+    <div id="no-clubs" class="no-clubs-msg" style="display: none; grid-column: 1 / -1; text-align: center; padding: 2rem; color: #ccc; font-size: 1.2rem;">No clubs in this category yet!</div>
   </main>
 </section>
 
