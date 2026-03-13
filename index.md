@@ -287,8 +287,13 @@ search_exclude: true
     <div class="home-top">
       <select class="home-sort" aria-label="Sort clubs">
         <option>SORT BY</option>
-        <option>Newest</option>
-        <option>Name</option>
+        <option>Advocacy/Awarness</option>
+        <option>STEM</option>
+        <option>Charity/Volunteer</option>
+        <option>Arts</option>
+        <option>Competition</option>
+        <option>Cultural/Society</option>
+        <option>Interest/Sport</option>
       </select>
     </div>
 
