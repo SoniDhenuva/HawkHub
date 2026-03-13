@@ -224,6 +224,19 @@ search_exclude: true
     background: #17536a;
   }
 
+  .club-card.hidden {
+    display: none !important;
+  }
+
+  .no-clubs-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: #ccc;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+
   @media (max-width: 900px) {
     .home-shell {
       grid-template-columns: 1fr;
@@ -287,37 +300,43 @@ search_exclude: true
     <div class="home-top">
       <select class="home-sort" aria-label="Sort clubs">
         <option>SORT BY</option>
-        <option>Newest</option>
-        <option>Name</option>
+        <option>Advocacy/Awarness</option>
+        <option>STEM</option>
+        <option>Charity/Volunteer</option>
+        <option>Arts</option>
+        <option>Competition</option>
+        <option>Cultural/Society</option>
+        <option>Interest/Sport</option>
       </select>
     </div>
 
-    <div class="club-grid">
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+  <div class="club-grid">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="STEM,Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/optix.png" alt="FRC Team Optix 3749"></div>
         <div class="name">FRC TEAM OPTIX 3749</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/hosa.png" alt="HOSA"></div>
         <div class="name">HOSA</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/speech_and_debate.png" alt="Speech and Debate"></div>
         <div class="name">SPEECH &amp; DEBATE</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Mock Trial"></div>
         <div class="name">MOCK TRIAL</div>
       </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search">
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/deca.png" alt="DECA"></div>
         <div class="name">DECA</div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search">
+      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/girls_in_cs.png" alt="Girls In CS"></div>
         <div class="name">Girls In CS</div>
       </a>
     </div>
+    <div id="no-clubs" class="no-clubs-msg" style="display: none; grid-column: 1 / -1; text-align: center; padding: 2rem; color: #ccc; font-size: 1.2rem;">No clubs in this category yet!</div>
   </main>
 </section>
 
@@ -345,5 +364,45 @@ search_exclude: true
   } else {
     loggedOutHome.style.display = "block";
     loggedInHome.style.display = "none";
+  }
+
+  // Club filtering functionality
+  function initClubFilter() {
+    const sortSelect = document.querySelector('.home-sort');
+    const clubGrid = document.querySelector('.club-grid');
+    const noClubsMsg = document.getElementById('no-clubs');
+    const clubCards = document.querySelectorAll('.club-card');
+
+    function filterClubs(category) {
+      let visibleCount = 0;
+      clubCards.forEach(card => {
+        card.classList.remove('hidden');
+        if (category && category !== 'SORT BY') {
+          const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
+          if (!categories.includes(category)) {
+            card.classList.add('hidden');
+          } else {
+            visibleCount++;
+          }
+        } else {
+          visibleCount += clubCards.length;
+        }
+      });
+      noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    sortSelect.addEventListener('change', (e) => {
+      filterClubs(e.target.value);
+    });
+
+    // Initial state: show all
+    filterClubs('SORT BY');
+  }
+
+  // Init filter after DOM ready (async safe)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initClubFilter);
+  } else {
+    initClubFilter();
   }
 </script>
