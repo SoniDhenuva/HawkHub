@@ -344,6 +344,14 @@ search_exclude: true
         <div class="name">American Cancer Society</div>
       </a>
       <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Charity/Volunteer,All Clubs">
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/interact.png" alt="Interact Club"></div>
+        <div class="name">Interact Club</div>
+      </a>
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Interest/Sport,Arts,All Clubs">
+        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/featheralist.png" alt="The Featheralist"></div>
+        <div class="name">The Featheralist</div>
+      </a>
+      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Charity/Volunteer,All Clubs">
         <div class="thumb"><img src="{{site.baseurl}}/images/clubs/link_crew.png" alt="Link Crew"></div>
         <div class="name">Link Crew</div>
       </a>
