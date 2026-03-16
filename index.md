@@ -347,6 +347,10 @@ search_exclude: true
   const loggedInHome = document.getElementById("logged-in-home");
 
   async function isLoggedIn() {
+    if (localStorage.getItem('forceLoggedOut') === '1') {
+      return false;
+    }
+
     try {
       const response = await fetch(`${pythonURI}/api/id`, fetchOptions);
       if (!response.ok) return false;

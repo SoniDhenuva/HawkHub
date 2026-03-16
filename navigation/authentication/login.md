@@ -359,6 +359,7 @@ show_reading_time: false
 
     // Function to handle both Python and Java login simultaneously
     window.loginBoth = function () {
+        localStorage.removeItem('forceLoggedOut');
         // Wrap both logins in Promises and only redirect after both finish
         let javaPromise = new Promise((resolve) => {
             window.javaLogin(resolve);

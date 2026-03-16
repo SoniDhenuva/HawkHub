@@ -4,7 +4,13 @@ console.log("login.js loaded");
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Base URL:", baseurl); // Debugging line
-    waitForElement('#loginArea', 20, 100).then(loginArea => {
+    waitForElement('#loginArea', 20, 100).then(async loginArea => {
+        const forceGuest = await ensureLogoutIfRequested();
+        if (forceGuest || hasForcedLogoutFlag() || isLoginRoute()) {
+            renderGuestLoginArea(loginArea);
+            return;
+        }
+
         getCredentials(baseurl)
             .then(data => {
                 console.log("Credentials data:", data); // Debugging line
@@ -75,6 +81,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function isLoginRoute() {
+    const path = window.location.pathname.replace(/\/+$/, '');
+    const loginPath = `${baseurl}/login`.replace(/\/+$/, '');
+    return path === loginPath;
+}
+
+function hasForcedLogoutFlag() {
+    return localStorage.getItem('forceLoggedOut') === '1';
+}
+
+function renderGuestLoginArea(loginArea) {
+    loginArea.innerHTML = `<a href="${baseurl}/login">Login</a>`;
+    waitForElement('.trigger', 20, 100).then(() => {
+        updateNavigation(false);
+    });
+    loginArea.style.opacity = "1";
+}
+
+async function ensureLogoutIfRequested() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('logout') !== '1') return false;
+
+    localStorage.setItem('forceLoggedOut', '1');
+
+    try {
+        const { handleLogout } = await import('./logout.js');
+        const result = await handleLogout();
+        console.log('Forced logout on login page:', result);
+    } catch (error) {
+        console.error('Forced logout failed:', error);
+    } finally {
+        const cleanPath = window.location.pathname;
+        window.history.replaceState({}, '', cleanPath);
+    }
+
+    return true;
+}
+
 // Wait for an element to exist in the DOM, retrying up to maxAttempts (delay between attempts)
 function waitForElement(selector, maxAttempts = 20, interval = 100) {
     return new Promise((resolve, reject) => {
@@ -94,8 +138,18 @@ function waitForElement(selector, maxAttempts = 20, interval = 100) {
 }
 
 function getCredentials(baseurl) {
-    const URL = pythonURI + '/api/id';
-    return fetch(URL, fetchOptions)
+    const URL = `${pythonURI}/api/id?ts=${Date.now()}`;
+    const requestOptions = {
+        ...fetchOptions,
+        cache: 'no-store',
+        headers: {
+            ...fetchOptions.headers,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+        }
+    };
+
+    return fetch(URL, requestOptions)
         .then(response => {
             if (!response.ok) {
                 console.warn("HTTP status code: " + response.status);
