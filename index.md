@@ -5,273 +5,6 @@ permalink: /
 search_exclude: true
 ---
 
-<style>
-  .page-content {
-    padding-top: 0 !important;
-  }
-
-  .post > .post-title {
-    display: none;
-  }
-
-  .post,
-  .post-content {
-    margin: 0 !important;
-    padding: 0 !important;
-    max-width: none !important;
-  }
-
-  #logged-out-home {
-    min-height: 100vh;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    position: relative;
-    background:
-      radial-gradient(circle at 82% 18%, rgba(26, 104, 182, 0.18), transparent 32%),
-      radial-gradient(circle at 12% 88%, rgba(23, 140, 82, 0.16), transparent 30%),
-      linear-gradient(180deg, #030918 0%, #020612 58%, #01040d 100%);
-    overflow: hidden;
-    color: #ecf4ff;
-    font-family: "Orbitron", "Exo 2", sans-serif;
-  }
-
-  #logged-out-home::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(30deg, rgba(41, 107, 194, 0.22) 12%, transparent 12.5%, transparent 87%, rgba(41, 107, 194, 0.22) 87.5%, rgba(41, 107, 194, 0.22)),
-      linear-gradient(150deg, rgba(41, 107, 194, 0.22) 12%, transparent 12.5%, transparent 87%, rgba(41, 107, 194, 0.22) 87.5%, rgba(41, 107, 194, 0.22)),
-      linear-gradient(90deg, rgba(7, 24, 52, 0.82) 2%, transparent 2.5%, transparent 97%, rgba(7, 24, 52, 0.82) 97.5%, rgba(7, 24, 52, 0.82));
-    background-size: 96px 166px;
-    background-position: 0 0, 0 0, 48px 83px;
-    opacity: 0.38;
-    pointer-events: none;
-  }
-
-  #logged-out-home::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(3, 9, 23, 0.05) 0%, rgba(16, 83, 151, 0.18) 52%, rgba(37, 140, 77, 0.10) 100%);
-    pointer-events: none;
-  }
-
-  .welcome-center {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    box-sizing: border-box;
-  }
-
-  .welcome-panel {
-    width: min(92vw, 780px);
-    min-height: 350px;
-    background: linear-gradient(145deg, rgba(2, 11, 33, 0.82), rgba(2, 8, 24, 0.76));
-    border: 1px solid rgba(63, 166, 236, 0.30);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(41, 185, 214, 0.08);
-    border-radius: 10px;
-    padding: 2.4rem 2.2rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .welcome-overline {
-    margin: 0 0 0.7rem;
-    font-size: clamp(1rem, 2.8vw, 2rem);
-    letter-spacing: 0.09em;
-    color: #dfecff;
-    font-weight: 500;
-  }
-
-  .welcome-title {
-    margin: 0;
-    line-height: 0.95;
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .welcome-hawk {
-    font-size: clamp(3rem, 10vw, 6.2rem);
-    color: #59c42f;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    text-shadow: 0 0 24px rgba(77, 201, 49, 0.18);
-  }
-
-  .welcome-hub {
-    font-size: clamp(2.7rem, 9vw, 5.8rem);
-    color: #2ca1d7;
-    font-family: "Brush Script MT", cursive;
-    font-weight: 400;
-    line-height: 1;
-    transform: translateY(0.2em);
-    text-shadow: 0 0 20px rgba(44, 161, 215, 0.2);
-  }
-
-  .welcome-tagline {
-    margin: 2rem 0 0;
-    color: #e6f2ff;
-    font-size: clamp(1.2rem, 3.4vw, 2rem);
-    letter-spacing: 0.03em;
-    font-weight: 700;
-  }
-
-  #logged-in-home {
-    display: none;
-  }
-
-  .home-shell {
-    background: #091a2e;
-    min-height: 100vh;
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    color: #e8f0ff;
-  }
-
-  .home-sidebar {
-    background: #081526;
-    padding: 1.3rem 0.8rem;
-  }
-
-  .home-sidebar h2 {
-    font-size: 2rem;
-    margin: 0 0 1.5rem 0;
-    letter-spacing: 0.03em;
-    line-height: 1;
-  }
-
-  .home-sidebar a {
-    display: block;
-    color: #5ec2ff;
-    text-decoration: none;
-    font-weight: 700;
-    margin: 0.75rem 0;
-    font-size: 1.05rem;
-  }
-
-  .home-main {
-    padding: 2rem;
-    background: #091a2e;
-  }
-
-  .home-top {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .home-sort {
-    border: 0;
-    background: #f2f4f8;
-    color: #1a1f2b;
-    padding: 0.4rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.8rem;
-  }
-
-  .club-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(180px, 1fr));
-    gap: 1.6rem;
-  }
-
-  .club-card {
-    background: #154f66;
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow: hidden;
-    text-decoration: none;
-  }
-
-  .club-card .thumb {
-    height: 300px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .club-card .thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .club-card .name {
-    background: #39b226;
-    color: #eef8ff;
-    text-align: center;
-    padding: 0.6rem 0.5rem;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-  }
-
-  .club-card.alt .name {
-    background: #17536a;
-  }
-
-  .club-card.hidden {
-    display: none !important;
-  }
-
-  .no-clubs-msg {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 2rem;
-    color: #ccc;
-    font-size: 1.2rem;
-    font-weight: 500;
-  }
-
-  @media (max-width: 900px) {
-    .home-shell {
-      grid-template-columns: 1fr;
-      width: 100%;
-      margin-left: 0;
-    }
-
-    .home-sidebar {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .home-sidebar h2 {
-      margin: 0;
-      width: 100%;
-      font-size: 1.5rem;
-    }
-
-    .club-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .welcome-panel {
-      padding: 1.5rem 1.1rem;
-      min-height: 260px;
-    }
-
-    .welcome-tagline {
-      margin-top: 1.4rem;
-    }
-  }
-</style>
-
 <section id="logged-out-home">
   <div class="welcome-center">
     <div class="welcome-panel">
@@ -288,75 +21,86 @@ search_exclude: true
 <section id="logged-in-home" class="home-shell">
   <aside class="home-sidebar">
     <h2>MENU</h2>
-    <a href="{{site.baseurl}}/">CLUBS</a>
-    <a href="{{site.baseurl}}/search">FEED</a>
-    <a href="{{site.baseurl}}/profile">CALENDAR</a>
-    <a href="{{site.baseurl}}/profile">RECOMMENDATIONS</a>
-    <a href="{{site.baseurl}}/profile">YOUR CLUBS</a>
-    <a href="{{site.baseurl}}/profile">NEW CLUB +</a>
+
+    <div class="home-nav-group">
+      <p class="home-nav-label">NAVIGATE</p>
+      <a class="home-nav-link is-active" href="{{site.baseurl}}/">CLUBS</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/search">FEED</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/profile">CALENDAR</a>
+    </div>
+
+    <div class="home-nav-group">
+      <p class="home-nav-label">PERSONAL</p>
+      <a class="home-nav-link" href="{{site.baseurl}}/recommendations">RECOMMENDATIONS</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/profile">YOUR CLUBS</a>
+    </div>
+
+    <a class="home-new-club" href="{{site.baseurl}}/profile">+ NEW CLUB</a>
   </aside>
 
   <main class="home-main">
-    <div class="home-top">
-      <select class="home-sort" aria-label="Sort clubs">
-        <option>All Clubs</option>
-        <option>Advocacy/Awareness</option>
-        <option>STEM</option>
-        <option>Charity/Volunteer</option>
-        <option>Arts</option>
-        <option>Competition</option>
-        <option>Cultural/Society</option>
-        <option>Interest/Sport</option>
-      </select>
+    <div class="home-main-header">
+      <h3 class="home-main-title"><span class="home-title-dot"></span> ALL CLUBS</h3>
+      <div class="home-filter-bar" role="group" aria-label="Filter clubs">
+        <button type="button" class="filter-chip is-active" data-filter="ALL">All Clubs</button>
+        <button type="button" class="filter-chip" data-filter="Advocacy/Awareness">Advocacy/Awareness</button>
+        <button type="button" class="filter-chip" data-filter="STEM">STEM</button>
+        <button type="button" class="filter-chip" data-filter="Charity/Volunteer">Charity/Volunteer</button>
+        <button type="button" class="filter-chip" data-filter="Arts">Arts</button>
+        <button type="button" class="filter-chip" data-filter="Competition">Competition</button>
+        <button type="button" class="filter-chip" data-filter="Cultural/Society">Cultural/Society</button>
+        <button type="button" class="filter-chip" data-filter="Interest/Sport">Interest/Sport</button>
+      </div>
     </div>
 
-  <div class="club-grid">
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="STEM,Competition,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/optix.png" alt="FRC Team Optix 3749"></div>
-        <div class="name">FRC TEAM OPTIX 3749</div>
+    <div class="club-grid club-grid-primary">
+      {% for club in site.data.school_clubs limit:3 %}
+      {% assign members = club.members | default: 20 | plus: forloop.index | plus: 8 %}
+      {% assign primary_category = club.categories[0] | default: 'Academic' %}
+      <a class="club-card {% if forloop.first %}is-featured{% endif %}" href="{{site.baseurl}}{{ club.href | default: '/search' }}" data-category="{{ club.categories | join: ',' }}">
+        {% if forloop.first %}
+        <span class="club-active-badge">ACTIVE</span>
+        {% endif %}
+        <div class="thumb"><img src="{{site.baseurl}}/images/{{ club.image }}" alt="{{ club.image_alt | default: club.name }}"></div>
+        <div class="club-overlay">
+          <div class="club-title-row">
+            <span class="club-name">{{ club.home_label | default: club.name }}</span>
+            <span class="club-kind">{{ primary_category | upcase }}</span>
+          </div>
+          <div class="club-meta-row">
+            <span>{{ members }} members</span>
+            {% if forloop.first %}
+            <span>SAN DIEGO, CA</span>
+            {% endif %}
+          </div>
+        </div>
       </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,Competition,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/hosa.png" alt="HOSA"></div>
-        <div class="name">HOSA</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/speech_and_debate.png" alt="Speech and Debate"></div>
-        <div class="name">SPEECH &amp; DEBATE</div>
-      </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/mock_trial.png" alt="Mock Trial"></div>
-        <div class="name">MOCK TRIAL</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Competition,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/deca.png" alt="DECA"></div>
-        <div class="name">DECA</div>
-      </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="STEM,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/girls_in_cs.png" alt="Girls In CS"></div>
-        <div class="name">Girls In CS</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Cultural/Society,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/sacs.png" alt="South Asian Cultural Show"></div>
-        <div class="name">South Asian Cultural Show</div>
-      </a>
-      <a class="club-card" href="{{site.baseurl}}/search" data-category="Advocacy/Awareness,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/acs.png" alt="American Cancer Society"></div>
-        <div class="name">American Cancer Society</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Charity/Volunteer,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/interact.png" alt="Interact Club"></div>
-        <div class="name">Interact Club</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Interest/Sport,Arts,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/featheralist.png" alt="The Featheralist"></div>
-        <div class="name">The Featheralist</div>
-      </a>
-      <a class="club-card alt" href="{{site.baseurl}}/search" data-category="Charity/Volunteer,All Clubs">
-        <div class="thumb"><img src="{{site.baseurl}}/images/clubs/link_crew.png" alt="Link Crew"></div>
-        <div class="name">Link Crew</div>
-      </a>
+      {% endfor %}
     </div>
-    <div id="no-clubs" class="no-clubs-msg" style="display: none; grid-column: 1 / -1; text-align: center; padding: 2rem; color: #ccc; font-size: 1.2rem;">No clubs in this category yet!</div>
+
+    <div class="club-divider"><span>// MORE CLUBS</span></div>
+
+    <div class="club-grid club-grid-more">
+      {% for club in site.data.school_clubs offset:3 %}
+      {% assign members = club.members | default: 18 | plus: forloop.index | plus: 5 %}
+      {% assign primary_category = club.categories[0] | default: 'Academic' %}
+      <a class="club-card" href="{{site.baseurl}}{{ club.href | default: '/search' }}" data-category="{{ club.categories | join: ',' }}">
+        <div class="thumb"><img src="{{site.baseurl}}/images/{{ club.image }}" alt="{{ club.image_alt | default: club.name }}"></div>
+        <div class="club-overlay">
+          <div class="club-title-row">
+            <span class="club-name">{{ club.home_label | default: club.name }}</span>
+            <span class="club-kind">{{ primary_category | upcase }}</span>
+          </div>
+          <div class="club-meta-row">
+            <span>{{ members }} members</span>
+            <span>{{ primary_category | upcase }}</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+    <div id="no-clubs" class="no-clubs-msg">No clubs in this category yet!</div>
   </main>
 </section>
 
@@ -392,35 +136,45 @@ search_exclude: true
 
   // Club filtering functionality
   function initClubFilter() {
-    const sortSelect = document.querySelector('.home-sort');
-    const clubGrid = document.querySelector('.club-grid');
+    const chips = document.querySelectorAll('.filter-chip');
+    const clubDivider = document.querySelector('.club-divider');
     const noClubsMsg = document.getElementById('no-clubs');
     const clubCards = document.querySelectorAll('.club-card');
 
-    function filterClubs(category) {
+    function clubMatchesFilter(card, filterValue) {
+      if (filterValue === 'ALL') return true;
+      const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
+      return categories.includes(filterValue);
+    }
+
+    function filterClubs(filterValue) {
       let visibleCount = 0;
+
       clubCards.forEach(card => {
-        card.classList.remove('hidden');
-        if (category && category !== 'SORT BY') {
-          const categories = card.dataset.category ? card.dataset.category.split(',').map(c => c.trim()) : [];
-          if (!categories.includes(category)) {
-            card.classList.add('hidden');
-          } else {
-            visibleCount++;
-          }
+        if (clubMatchesFilter(card, filterValue)) {
+          card.classList.remove('hidden');
+          visibleCount += 1;
         } else {
-          visibleCount += clubCards.length;
+          card.classList.add('hidden');
         }
       });
+
+      if (clubDivider) {
+        clubDivider.style.display = visibleCount > 3 ? 'flex' : 'none';
+      }
+
       noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
     }
 
-    sortSelect.addEventListener('change', (e) => {
-      filterClubs(e.target.value);
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        filterClubs(chip.dataset.filter || 'ALL');
+      });
     });
 
-    // Initial state: show all
-    filterClubs('SORT BY');
+    filterClubs('ALL');
   }
 
   // Init filter after DOM ready (async safe)

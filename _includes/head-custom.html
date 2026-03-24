@@ -64,11 +64,15 @@
 <!-- OCS Analytics Tracking Script (loaded on every page) -->
 <script src="{{ site.baseurl }}/assets/js/ocs-analytics-tracker.js" defer></script>
 
+{%- if page.layout == "recommendation_system" -%}
+<link rel="stylesheet" href="{{ '/assets/css/recommendation-system.css' | relative_url }}">
+{%- endif -%}
+
 <style>
   html,
   body,
   .page-content,
   .opencs_root {
-    background-color: #091a2e;
+    background-color: #030303;
   }
 </style>

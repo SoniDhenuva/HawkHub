@@ -1,0 +1,274 @@
+:root {
+  --cyber-bg-0: #02060d;
+  --cyber-bg-1: #041126;
+  --cyber-bg-2: #071c36;
+  --cyber-surface: rgba(4, 18, 37, 0.78);
+  --cyber-surface-soft: rgba(5, 22, 43, 0.56);
+  --cyber-border: rgba(0, 235, 255, 0.3);
+  --cyber-border-soft: rgba(58, 132, 196, 0.32);
+  --cyber-text: #d6ecff;
+  --cyber-muted: #7aa5ca;
+  --cyber-blue: #00d8ff;
+  --cyber-green: #00f08b;
+  --cyber-link: #45d7ff;
+  --cyber-link-hover: #6dfcae;
+  --cyber-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: #030303;
+  color: var(--cyber-text);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(185, 185, 185, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(185, 185, 185, 0.15) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.28;
+  z-index: -1;
+}
+
+body .site-header.hawkhub-header {
+  background: rgba(2, 8, 17, 0.94);
+  border-top: 0;
+  border-bottom: 1px solid var(--cyber-border-soft);
+  box-shadow: var(--cyber-shadow);
+}
+
+body .hawkhub-header .wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1360px !important;
+  width: calc(100% - 36px);
+}
+
+body .hawkhub-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 3.1vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none !important;
+}
+
+.hawkhub-title .hawk {
+  color: var(--cyber-green);
+}
+
+.hawkhub-title .hub {
+  color: var(--cyber-blue);
+  font-style: italic;
+  font-weight: 500;
+}
+
+body .site-nav .trigger {
+  display: flex !important;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+body .site-nav .page-link {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #63cfff;
+  opacity: 0.92;
+}
+
+body .site-nav .page-link:hover {
+  color: #8cfcc2;
+}
+
+body #loginArea.page-link {
+  border: 1px solid rgba(0, 240, 139, 0.6);
+  color: #a7ffd2;
+  padding: 0.34rem 0.72rem;
+  border-radius: 0;
+  font-size: 0.76rem;
+  letter-spacing: 0.1em;
+  text-transform: none;
+}
+
+.hawkhub-header .page-link,
+.site-nav .page-link,
+.site-nav .nav-item,
+a {
+  color: var(--cyber-link);
+}
+
+a:hover,
+.hawkhub-header .page-link:hover,
+.site-nav .page-link:hover {
+  color: var(--cyber-link-hover);
+  text-decoration-color: rgba(0, 240, 139, 0.45);
+}
+
+.page-content {
+  background: transparent;
+}
+
+.wrapper,
+.opencs_root {
+  position: relative;
+}
+
+.post,
+article.post,
+.lesson-content-inner,
+.home-main,
+.home-sidebar {
+  background: var(--cyber-surface);
+  border: 1px solid var(--cyber-border-soft);
+  border-radius: 14px;
+  box-shadow: var(--cyber-shadow);
+}
+
+.post,
+article.post {
+  padding: 1.1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.post-title {
+  color: #f0fbff;
+  letter-spacing: 0.02em;
+}
+
+p,
+li,
+td,
+th,
+label,
+.post-meta,
+.page-description {
+  color: var(--cyber-text);
+}
+
+small,
+.post-meta,
+.footer-col-wrapper,
+.site-footer,
+.no-clubs-msg,
+.club-card .meta {
+  color: var(--cyber-muted);
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--cyber-border-soft);
+}
+
+blockquote {
+  border-left: 4px solid var(--cyber-blue);
+  background: var(--cyber-surface-soft);
+  border-radius: 8px;
+  padding: 1rem 1rem 1rem 1.1rem;
+  color: var(--cyber-text);
+}
+
+pre,
+code,
+code.highlighter-rouge,
+div.highlight,
+figure.highlight {
+  border-color: rgba(51, 122, 184, 0.35);
+}
+
+pre,
+code,
+code.highlighter-rouge {
+  background-color: rgba(8, 20, 38, 0.88);
+  color: #bde7ff;
+}
+
+table {
+  border-color: var(--cyber-border-soft);
+  background: var(--cyber-surface-soft);
+}
+
+table tr:nth-child(even) {
+  background-color: rgba(6, 24, 44, 0.64);
+}
+
+table th {
+  background: rgba(6, 36, 66, 0.78);
+  border-color: var(--cyber-border-soft);
+  color: #dff5ff;
+}
+
+table td {
+  border-color: rgba(45, 107, 161, 0.34);
+}
+
+input,
+select,
+textarea,
+button {
+  border-radius: 10px;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid rgba(58, 132, 196, 0.45);
+  background: rgba(5, 20, 38, 0.82);
+  color: #dcf2ff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--cyber-blue);
+  box-shadow: 0 0 0 3px rgba(0, 216, 255, 0.16);
+}
+
+button,
+.button,
+.btn,
+.submit-btn {
+  border: 1px solid rgba(0, 228, 255, 0.5);
+  background: linear-gradient(120deg, rgba(4, 69, 120, 0.95), rgba(3, 44, 87, 0.95));
+  color: #e4f7ff;
+  transition: 0.2s ease;
+}
+
+button:hover,
+.button:hover,
+.btn:hover,
+.submit-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 240, 139, 0.55);
+  background: linear-gradient(120deg, rgba(8, 118, 104, 0.95), rgba(4, 78, 126, 0.95));
+}
+
+.club-card,
+.card,
+.lesson-item,
+.submission-form,
+.assignment-submission,
+.recommendation-panel,
+.recommendation-ranked-card {
+  border-color: var(--cyber-border-soft);
+}
+
+.site-footer {
+  border-top: 1px solid var(--cyber-border-soft);
+  background: rgba(2, 10, 20, 0.86);
+}

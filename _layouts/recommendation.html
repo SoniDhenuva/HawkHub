@@ -1,0 +1,80 @@
+---
+layout: opencs
+---
+
+<link rel="stylesheet" href="{{ '/assets/css/recommendation-layout.css' | relative_url }}">
+
+<section class="home-shell recommendation-shell">
+  <aside class="home-sidebar">
+    <h2>MENU</h2>
+
+    <div class="home-nav-group">
+      <p class="home-nav-label">NAVIGATE</p>
+      <a class="home-nav-link" href="{{site.baseurl}}/">CLUBS</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/search">FEED</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/profile">CALENDAR</a>
+    </div>
+
+    <div class="home-nav-group">
+      <p class="home-nav-label">PERSONAL</p>
+      <a class="home-nav-link is-active" href="{{site.baseurl}}/recommendations">RECOMMENDATIONS</a>
+      <a class="home-nav-link" href="{{site.baseurl}}/profile">YOUR CLUBS</a>
+    </div>
+
+    <a class="home-new-club" href="{{site.baseurl}}/profile">+ NEW CLUB</a>
+  </aside>
+
+  <main class="home-main">
+    <article class="recommendation-layout recommendation-tech-shell">
+      <header class="recommendation-header recommendation-panel">
+        <p class="recommendation-kicker">// HAWKHUB MATCH ENGINE v2.4</p>
+        <h1 class="recommendation-main-title">Club Recommendations</h1>
+        <p class="recommendation-description">Take a quick interest survey and get ML-style club matches.</p>
+      </header>
+
+      <section class="recommendation-overview" aria-label="How recommendations are generated">
+        <article class="recommendation-mini recommendation-panel">
+          <p class="recommendation-mini-kicker">01 // STUDENT INPUTS</p>
+          <h2>Interest Profile</h2>
+          <p>Choose subjects, activities, and vibes that feel most like you.</p>
+        </article>
+        <article class="recommendation-mini recommendation-panel">
+          <p class="recommendation-mini-kicker">02 // WEIGHTED MODEL</p>
+          <h2>Scoring Engine</h2>
+          <p>The engine scores each club based on overlap and category weights.</p>
+        </article>
+        <article class="recommendation-mini recommendation-panel">
+          <p class="recommendation-mini-kicker">03 // RANKED OUTPUT</p>
+          <h2>Ranked Matches</h2>
+          <p>You get confidence percentages, rank bars, and top-matching tags.</p>
+        </article>
+      </section>
+
+      <section class="recommendation-card recommendation-panel" aria-labelledby="survey-heading">
+        <div class="recommendation-card-head">
+          <h2 id="survey-heading">Interest Survey</h2>
+          <p>Pick topics and activities you enjoy. The model scores and ranks the clubs for you.</p>
+        </div>
+
+        <div id="recommendationQuestions" class="recommendation-questions"></div>
+
+        <div class="recommendation-actions">
+          <button id="recommendationSubmit" type="button" class="recommendation-button primary">Get Recommendations</button>
+          <button id="recommendationReset" type="button" class="recommendation-button">Reset</button>
+        </div>
+
+        <p id="recommendationValidation" class="recommendation-validation" aria-live="polite"></p>
+      </section>
+
+      <section id="recommendationResults" class="recommendation-results recommendation-panel" aria-live="polite">
+        <p class="recommendation-placeholder">Run the survey to generate ranked club matches.</p>
+      </section>
+    </article>
+  </main>
+</section>
+
+<script>
+  window.RECOMMENDATION_BASEURL = "{{ site.baseurl }}";
+  window.HAWKHUB_SCHOOL_CLUBS = {{ site.data.school_clubs | jsonify }};
+</script>
+<script src="{{ '/assets/js/recommendation-layout.js' | relative_url }}"></script>

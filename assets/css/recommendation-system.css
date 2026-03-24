@@ -1,0 +1,477 @@
+/* ============================================================
+   RECOMMENDATION SYSTEM — matches club page navy/teal theme
+   ============================================================ */
+
+/* ---- token overrides ---------------------------------------- */
+.recsys-shell {
+  --recsys-blue:        var(--cyber-blue,   #00d8ff);
+  --recsys-green:       var(--cyber-green,  #00f08b);
+  --recsys-text:        var(--cyber-text,   #d6ecff);
+  --recsys-muted:       var(--cyber-muted,  #7aa5ca);
+  --recsys-surface:     rgba(4, 18, 37, 0.78);
+  --recsys-border:      rgba(58, 132, 196, 0.32);
+  --recsys-accent:      rgba(0, 216, 255, 0.38);
+  --recsys-chip-bg:     rgba(5, 24, 48, 0.82);
+  --recsys-chip-border: rgba(0, 216, 255, 0.42);
+}
+
+/* ---- cancel cyber-theme overrides that add radius/padding ---- */
+.recsys-shell .home-sidebar,
+.recsys-shell .home-main {
+  background: var(--recsys-surface) !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.recsys-shell .home-sidebar {
+  border-right: 1px solid var(--recsys-border) !important;
+}
+
+/* ---- layout root -------------------------------------------- */
+.recsys-layout {
+  color: var(--recsys-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+/* ============================================================
+   PANELS — dark navy + teal corner accents (same as club cards)
+   ============================================================ */
+.recsys-panel {
+  position: relative;
+  background: rgba(5, 22, 43, 0.72);
+  border: 1px solid var(--recsys-accent);
+  border-radius: 0;
+}
+
+.recsys-panel::before,
+.recsys-panel::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--recsys-blue);
+  border-style: solid;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.recsys-panel::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.recsys-panel::after {
+  right: -1px;
+  bottom: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* ============================================================
+   HEADER PANEL
+   ============================================================ */
+.recsys-header {
+  padding: 0.9rem 1.1rem;
+}
+
+.recsys-kicker {
+  margin: 0;
+  color: #63cfff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.recsys-title {
+  margin: 0.38rem 0 0;
+  font-size: clamp(1.45rem, 2.2vw, 1.95rem);
+  line-height: 1.08;
+  font-weight: 700;
+  display: block !important;
+  color: #eefaff !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  letter-spacing: 0.01em;
+}
+
+.recsys-description {
+  margin: 0.32rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.86rem;
+}
+
+/* ============================================================
+   THREE INFO CARDS ROW
+   ============================================================ */
+.recsys-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.recsys-mini-card {
+  padding: 0.7rem 0.85rem;
+}
+
+.recsys-mini-kicker {
+  margin: 0;
+  color: var(--recsys-blue);
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.recsys-mini-card h2 {
+  margin: 0.36rem 0 0;
+  font-size: 1.1rem;
+  line-height: 1.1;
+  font-weight: 700;
+  color: #edf8ff;
+  letter-spacing: 0.01em;
+}
+
+.recsys-mini-card p {
+  margin: 0.38rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+/* ============================================================
+   SURVEY PANEL
+   ============================================================ */
+.recsys-survey {
+  padding: 0.85rem 0.95rem;
+}
+
+.recsys-survey-head h2 {
+  margin: 0;
+  color: var(--recsys-green) !important;
+  font-size: clamp(1.45rem, 2.4vw, 1.9rem) !important;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 14px rgba(0, 240, 139, 0.35);
+}
+
+.recsys-survey-head h2::before {
+  content: "• ";
+  color: var(--recsys-green);
+}
+
+.recsys-survey-head p {
+  margin: 0.34rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.83rem;
+}
+
+/* question blocks */
+.recsys-questions {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recsys-questions .recommendation-question {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.recsys-questions .recommendation-question h3 {
+  margin: 0 0 0.45rem;
+  color: #63cfff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.67rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.recsys-questions .recommendation-question h3::before {
+  content: "// ";
+}
+
+.recsys-questions .recommendation-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+/* chip buttons */
+.recsys-questions .recommendation-option {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  border: 1px solid var(--recsys-chip-border);
+  border-radius: 0;
+  background: var(--recsys-chip-bg);
+  color: #7aa5ca;
+  padding: 0.3rem 0.72rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.recsys-questions .recommendation-option:hover {
+  border-color: var(--recsys-blue);
+  color: #d8f4ff;
+}
+
+.recsys-questions .recommendation-option.recommendation-option-selected {
+  border-color: var(--recsys-green);
+  color: #c8ffe8;
+  background: rgba(0, 240, 139, 0.1);
+}
+
+.recsys-questions .recommendation-option input {
+  display: none;
+}
+
+/* action buttons */
+.recsys-actions {
+  margin-top: 0.82rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.recsys-button {
+  border: 1px solid var(--recsys-chip-border);
+  border-radius: 0;
+  background: var(--recsys-chip-bg);
+  color: #c8e8ff;
+  padding: 0.52rem 0.9rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.67rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.recsys-button:hover {
+  border-color: var(--recsys-blue);
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.22);
+}
+
+.recsys-button.primary {
+  border-color: rgba(0, 240, 139, 0.65);
+  background: rgba(0, 100, 55, 0.22);
+  color: #c8ffe8;
+}
+
+.recsys-button.primary:hover {
+  border-color: var(--recsys-green);
+  box-shadow: 0 0 10px rgba(0, 240, 139, 0.25);
+}
+
+.recsys-validation {
+  min-height: 1rem;
+  margin: 0.62rem 0 0;
+  color: #ffc782;
+  font-size: 0.84rem;
+}
+
+/* ============================================================
+   RESULTS PANEL
+   ============================================================ */
+.recsys-results {
+  padding: 0.85rem 0.95rem;
+}
+
+.recsys-placeholder,
+.recsys-shell .recommendation-placeholder {
+  margin: 0;
+  color: var(--recsys-muted);
+  font-size: 0.88rem;
+}
+
+.recsys-shell .recommendation-result-header {
+  margin-bottom: 0.7rem;
+}
+
+.recsys-shell .recommendation-result-header h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--recsys-blue);
+  letter-spacing: 0.06em;
+}
+
+.recsys-shell .recommendation-result-header p {
+  margin: 0.3rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.82rem;
+}
+
+/* top match */
+.recsys-shell .recommendation-top {
+  border: 1px solid var(--recsys-accent);
+  border-radius: 0;
+  background: rgba(5, 22, 43, 0.65);
+  padding: 0.7rem;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0.7rem;
+}
+
+.recsys-shell .recommendation-top-image {
+  width: 100%;
+  height: 98px;
+  object-fit: cover;
+  border-radius: 0;
+  border: 1px solid var(--recsys-chip-border);
+}
+
+.recsys-shell .recommendation-top h4 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--recsys-green);
+  letter-spacing: 0.04em;
+}
+
+.recsys-shell .recommendation-top p {
+  margin: 0.3rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.8rem;
+}
+
+.recsys-shell .recommendation-bar-wrap {
+  margin-top: 0.5rem;
+}
+
+.recsys-shell .recommendation-bar-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--recsys-text);
+  font-size: 0.78rem;
+  margin-bottom: 0.25rem;
+}
+
+.recsys-shell .recommendation-bar {
+  width: 100%;
+  height: 7px;
+  background: rgba(5, 26, 50, 0.9);
+  border: 1px solid var(--recsys-chip-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.recsys-shell .recommendation-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--recsys-green) 0%, var(--recsys-blue) 100%);
+}
+
+/* ranked grid */
+.recsys-shell .recommendation-rank-grid {
+  margin-top: 0.72rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.recsys-shell .recommendation-ranked-card {
+  border: 1px solid var(--recsys-accent);
+  border-radius: 0;
+  background: rgba(5, 22, 43, 0.65);
+  padding: 0.6rem;
+}
+
+.recsys-shell .recommendation-ranked-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.recsys-shell .recommendation-ranked-head h5 {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #edf8ff;
+}
+
+.recsys-shell .recommendation-ranked-rank {
+  color: var(--recsys-blue);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+}
+
+.recsys-shell .recommendation-ranked-card p {
+  margin: 0.3rem 0 0;
+  color: var(--recsys-muted);
+  font-size: 0.78rem;
+}
+
+.recsys-shell .recommendation-tags {
+  margin-top: 0.52rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+}
+
+.recsys-shell .recommendation-tag {
+  border: 1px solid var(--recsys-chip-border);
+  border-radius: 0;
+  background: rgba(5, 26, 50, 0.82);
+  color: #a8d4f0;
+  font-size: 0.66rem;
+  padding: 0.15rem 0.4rem;
+  letter-spacing: 0.08em;
+}
+
+.recsys-shell .recommendation-link {
+  color: var(--recsys-blue);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.recsys-shell .recommendation-link:hover {
+  color: var(--recsys-green);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 980px) {
+  .recsys-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .recsys-shell .recommendation-rank-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recsys-shell .recommendation-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .recsys-shell {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .recsys-actions {
+    flex-wrap: wrap;
+  }
+}
