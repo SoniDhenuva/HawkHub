@@ -48,50 +48,41 @@ jtd.onReady = function(ready) {
 // Site search
 
 function initSearch() {
-    var request = new XMLHttpRequest();
-    request.open('GET', '{{ "assets/js/search-data.json" | relative_url }}', true);
-  
-    request.onload = function(){
-      if (request.status >= 200 && request.status < 400) {
-        // Success!
-        var data = JSON.parse(request.responseText);
-        
-        {% if site.search_tokenizer_separator != nil %}
-        lunr.tokenizer.separator = {{ site.search_tokenizer_separator }}
-        {% else %}
-        lunr.tokenizer.separator = /[\s\-/]+/
-        {% endif %}
-        
-        var index = lunr(function () {
-          this.ref('id');
-          this.field('title', { boost: 200 });
-          this.field('content', { boost: 2 });
-          this.field('url');
-          this.metadataWhitelist = ['position']
-  
-          for (var i in data) {
-            this.add({
-              id: i,
-              title: data[i].title,
-              content: data[i].content,
-              url: data[i].url
-            });
-          }
+    var clubs = {{ site.data.school_clubs | jsonify }};
+    var data = (Array.isArray(clubs) ? clubs : []).map(function(club, idx) {
+      var categories = Array.isArray(club.categories) ? club.categories : [];
+      var tags = Array.isArray(club.tags) ? club.tags : [];
+      return {
+        id: club.id || ('club-' + idx),
+        title: club.home_label || club.name || 'Unnamed Club',
+        content: [club.summary || '', categories.join(' '), tags.join(' ')].join(' ').trim(),
+        url: '{{ site.baseurl }}' + (club.href || '/'),
+        date: categories[0] || 'Club'
+      };
+    });
+
+    {% if site.search_tokenizer_separator != nil %}
+    lunr.tokenizer.separator = {{ site.search_tokenizer_separator }}
+    {% else %}
+    lunr.tokenizer.separator = /[\s\-/]+/
+    {% endif %}
+
+    var index = lunr(function () {
+      this.ref('id');
+      this.field('title', { boost: 200 });
+      this.field('content', { boost: 2 });
+      this.metadataWhitelist = ['position'];
+
+      for (var i in data) {
+        this.add({
+          id: data[i].id,
+          title: data[i].title,
+          content: data[i].content
         });
-  
-        searchResults(index, data);
-      } else {
-        // We reached our target server, but it returned an error
-        console.log('Error loading ajax request. Request status:' + request.status);
       }
-    };
-  
-    request.onerror = function(){
-      // There was a connection error of some sort
-      console.log('There was a connection error');
-    };
-  
-    request.send();
+    });
+
+    searchResults(index, data);
   
     function searchResults(index, data) {
       var index = index;
@@ -187,7 +178,12 @@ function initSearch() {
   
           for (var i in results) {
             var result = results[i];
-            var doc = docs[result.ref];
+            var doc = docs.find(function(item) {
+              return item.id === result.ref;
+            });
+            if (!doc) {
+              continue;
+            }
   
             var resultsListItem = document.createElement('li');
             resultsListItem.classList.add('search-results-list-item');
