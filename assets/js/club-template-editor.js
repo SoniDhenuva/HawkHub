@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "hawkhub.clubTemplate.v1";
+  const JOIN_REQUESTS_KEY = "hawkhub.clubTemplate.joinRequests.v1";
 
   const defaults = {
     clubName: "Club Name",
@@ -27,9 +28,36 @@
   const panel = document.getElementById("editor-panel");
   const toggleEditor = document.getElementById("toggle-editor");
   const resetButton = document.getElementById("reset-template");
+  const joinLink = document.getElementById("join-link");
+  const joinNote = document.getElementById("join-note");
 
-  if (!form || !panel || !toggleEditor || !resetButton) {
+  if (!form || !panel || !toggleEditor || !resetButton || !joinLink) {
     return;
+  }
+
+  function getApiConfig() {
+    const fallbackJavaURI = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:8585"
+      : "https://spring.opencodingsociety.com";
+
+    const fallbackPythonURI = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:8587"
+      : "https://flask.opencodingsociety.com";
+
+    return window.clubTemplateApi || {
+      javaURI: fallbackJavaURI,
+      pythonURI: fallbackPythonURI,
+      fetchOptions: {
+        method: "GET",
+        mode: "cors",
+        cache: "default",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Origin": "client"
+        }
+      }
+    };
   }
 
   function toAbsoluteUrl(value, fallback) {
@@ -67,6 +95,63 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
+  function normalizeClubName(name) {
+    return (name || "").trim().toLowerCase();
+  }
+
+  function loadJoinRequests() {
+    try {
+      const saved = localStorage.getItem(JOIN_REQUESTS_KEY);
+      if (!saved) {
+        return {};
+      }
+
+      const parsed = JSON.parse(saved);
+      if (!parsed || typeof parsed !== "object") {
+        return {};
+      }
+
+      return parsed;
+    } catch {
+      return {};
+    }
+  }
+
+  function saveJoinRequests(requests) {
+    localStorage.setItem(JOIN_REQUESTS_KEY, JSON.stringify(requests));
+  }
+
+  function hasRequestedJoin(clubName) {
+    const key = normalizeClubName(clubName);
+    if (!key) {
+      return false;
+    }
+
+    const requests = loadJoinRequests();
+    return requests[key] === true;
+  }
+
+  function markJoinRequested(clubName) {
+    const key = normalizeClubName(clubName);
+    if (!key) {
+      return;
+    }
+
+    const requests = loadJoinRequests();
+    requests[key] = true;
+    saveJoinRequests(requests);
+  }
+
+  function updateJoinButtonAvailability(clubName) {
+    const alreadyRequested = hasRequestedJoin(clubName);
+    joinLink.setAttribute("aria-disabled", alreadyRequested ? "true" : "false");
+    joinLink.classList.toggle("is-disabled", alreadyRequested);
+
+    if (alreadyRequested) {
+      setJoinMessage(`Join request already sent for ${clubName}. Waiting for approval.`);
+    }
+  }
+
   function setText(id, value) {
     const element = document.getElementById(id);
     if (element) {
@@ -92,6 +177,78 @@
 
     const fallback = image.getAttribute("data-default-src") || image.src;
     image.src = toAbsoluteUrl(value, fallback);
+  }
+
+  async function getCurrentUsername() {
+    const cachedUser = window.user || null;
+
+    if (cachedUser?.uid) {
+      return cachedUser.uid;
+    }
+
+    if (cachedUser?.name) {
+      return cachedUser.name;
+    }
+
+    return null;
+  }
+
+  function setJoinMessage(message) {
+    if (joinNote) {
+      joinNote.textContent = message;
+    }
+  }
+
+  async function requestJoinClub() {
+    const { javaURI, fetchOptions } = getApiConfig();
+    const currentState = loadState();
+    const clubName = (currentState.clubName || defaults.clubName).trim();
+
+    if (!clubName) {
+      setJoinMessage("Set a club name before sending a join request.");
+      return;
+    }
+
+    if (hasRequestedJoin(clubName)) {
+      updateJoinButtonAvailability(clubName);
+      return;
+    }
+
+    const personName = await getCurrentUsername();
+    if (!personName) {
+      setJoinMessage("Sign in first so we can attach your name to the request.");
+      return;
+    }
+
+    joinLink.setAttribute("aria-busy", "true");
+    joinLink.classList.add("is-loading");
+    setJoinMessage("Sending your approval request...");
+
+    try {
+      const response = await fetch(`${javaURI}/api/club-memberships`, {
+        ...fetchOptions,
+        method: "POST",
+        body: JSON.stringify({
+          personName,
+          clubName,
+          status: "PENDING"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      markJoinRequested(clubName);
+      updateJoinButtonAvailability(clubName);
+      setJoinMessage(`Join request sent for ${clubName}. It is now pending approval.`);
+    } catch (error) {
+      console.error("Failed to send club join request:", error);
+      setJoinMessage("Could not send the join request right now. Please try again.");
+    } finally {
+      joinLink.removeAttribute("aria-busy");
+      joinLink.classList.remove("is-loading");
+    }
   }
 
   function readFormData() {
@@ -134,7 +291,6 @@
     setLink("social-2", state.social2Label || defaults.social2Label, state.social2Url || defaults.social2Url);
     setLink("social-3", state.social3Label || defaults.social3Label, state.social3Url || defaults.social3Url);
 
-    const joinLink = document.getElementById("join-link");
     if (joinLink) {
       joinLink.href = (state.joinUrl || defaults.joinUrl).trim() || "#";
     }
@@ -145,6 +301,8 @@
     setPhoto("club-photo-2", state.photo2);
     setPhoto("club-photo-3", state.photo3);
     setPhoto("club-photo-4", state.photo4);
+
+    updateJoinButtonAvailability(resolvedClubName);
   }
 
   function setEditorOpen(isOpen) {
@@ -167,6 +325,14 @@
     saveState(currentState);
     render(currentState);
     setEditorOpen(false);
+  });
+
+  joinLink.addEventListener("click", function (event) {
+    event.preventDefault();
+    if (joinLink.getAttribute("aria-disabled") === "true") {
+      return;
+    }
+    requestJoinClub();
   });
 
   form.elements.clubName.addEventListener("input", function (event) {

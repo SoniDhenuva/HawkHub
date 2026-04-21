@@ -123,4 +123,9 @@ search_exclude: true
   </main>
 </section>
 
+<script type="module">
+  import { javaURI, pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
+
+  window.clubTemplateApi = { javaURI, pythonURI, fetchOptions };
+</script>
 <script src="{{ '/assets/js/club-template-editor.js' | relative_url }}"></script>
