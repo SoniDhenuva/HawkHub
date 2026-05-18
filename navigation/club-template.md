@@ -45,10 +45,10 @@ search_exclude: true
         <section class="card media-card" aria-labelledby="club-pics-title">
           <h2 id="club-pics-title">Club Pics</h2>
           <div class="photo-grid">
-            <img id="club-photo-1" data-default-src="{{ '/images/clubs/optix.png' | relative_url }}" src="{{ '/images/clubs/optix.png' | relative_url }}" alt="Club photo 1">
-            <img id="club-photo-2" data-default-src="{{ '/images/clubs/hosa.png' | relative_url }}" src="{{ '/images/clubs/hosa.png' | relative_url }}" alt="Club photo 2">
-            <img id="club-photo-3" data-default-src="{{ '/images/clubs/speech_and_debate.png' | relative_url }}" src="{{ '/images/clubs/speech_and_debate.png' | relative_url }}" alt="Club photo 3">
-            <img id="club-photo-4" data-default-src="{{ '/images/clubs/mock_trial.png' | relative_url }}" src="{{ '/images/clubs/mock_trial.png' | relative_url }}" alt="Club photo 4">
+            <img id="club-photo-1" data-default-src="{{ '/images/clubs/sample_image_1.png' | relative_url }}" src="{{ '/images/clubs/sample_image_1.png' | relative_url }}" alt="Club photo 1">
+            <img id="club-photo-2" data-default-src="{{ '/images/clubs/sample_image_2.png' | relative_url }}" src="{{ '/images/clubs/sample_image_2.png' | relative_url }}" alt="Club photo 2">
+            <img id="club-photo-3" data-default-src="{{ '/images/clubs/sample_image_3.png' | relative_url }}" src="{{ '/images/clubs/sample_image_3.png' | relative_url }}" alt="Club photo 3">
+            <img id="club-photo-4" data-default-src="{{ '/images/clubs/sample_image_4.png' | relative_url }}" src="{{ '/images/clubs/sample_image_4.png' | relative_url }}" alt="Club photo 4">
           </div>
           <p class="hint">Use the editor below to update text, links, and image URLs.</p>
         </section>

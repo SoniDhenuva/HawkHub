@@ -35,7 +35,7 @@ search_exclude: true
       <a class="home-nav-link" href="{{site.baseurl}}/profile">YOUR CLUBS</a>
     </div>
 
-    <a class="home-new-club" href="{{site.baseurl}}/profile">+ NEW CLUB</a>
+    <a class="home-new-club" href="{{site.baseurl}}/club-template">+ NEW CLUB</a>
   </aside>
 
   <main class="home-main">
@@ -57,7 +57,7 @@ search_exclude: true
       {% for club in site.data.school_clubs limit:3 %}
       {% assign members = club.members | default: 20 | plus: forloop.index | plus: 8 %}
       {% assign primary_category = club.categories[0] | default: 'Academic' %}
-      <a class="club-card {% if forloop.first %}is-featured{% endif %}" href="{{site.baseurl}}{{ club.href | default: '/search' }}" data-category="{{ club.categories | join: ',' }}">
+      <a class="club-card {% if forloop.first %}is-featured{% endif %}" href="{{site.baseurl}}/club-template/" data-category="{{ club.categories | join: ',' }}">
         {% if forloop.first %}
         <span class="club-active-badge">ACTIVE</span>
         {% endif %}
@@ -84,7 +84,7 @@ search_exclude: true
       {% for club in site.data.school_clubs offset:3 %}
       {% assign members = club.members | default: 18 | plus: forloop.index | plus: 5 %}
       {% assign primary_category = club.categories[0] | default: 'Academic' %}
-      <a class="club-card" href="{{site.baseurl}}{{ club.href | default: '/search' }}" data-category="{{ club.categories | join: ',' }}">
+      <a class="club-card" href="{{site.baseurl}}/club-template/" data-category="{{ club.categories | join: ',' }}">
         <div class="thumb"><img src="{{site.baseurl}}/images/{{ club.image }}" alt="{{ club.image_alt | default: club.name }}"></div>
         <div class="club-overlay">
           <div class="club-title-row">
