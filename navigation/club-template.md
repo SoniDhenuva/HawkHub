@@ -85,13 +85,20 @@ search_exclude: true
       <section class="card editor-panel" id="editor-panel" aria-label="Club info editor" hidden>
         <div class="editor-header">
           <h2>Edit Club Info</h2>
-          <p>Changes save in this browser via local storage. No backend required.</p>
+          <p>Changes save to the backend so the club can appear on the main clubs page.</p>
+          <p id="editor-status" class="editor-status" aria-live="polite"></p>
         </div>
 
         <form id="club-editor-form" class="editor-grid">
+          <input type="hidden" name="clubId">
           <label>Club Name<input type="text" name="clubName" required></label>
           <label>Tagline<input type="text" name="tagline"></label>
           <label class="full">Summary<textarea name="summary" rows="4"></textarea></label>
+
+          <label>Primary Category<input type="text" name="primaryCategory" placeholder="STEM"></label>
+          <label>Additional Categories<input type="text" name="secondaryCategories" placeholder="Competition, All Clubs"></label>
+          <label>Tags<input type="text" name="tags" placeholder="coding, science, build"></label>
+          <label>Image Alt Text<input type="text" name="imageAlt" placeholder="Club image description"></label>
 
           <label>Members<input type="text" name="members"></label>
           <label>Meeting Frequency<input type="text" name="frequency"></label>
@@ -126,6 +133,6 @@ search_exclude: true
 <script type="module">
   import { javaURI, pythonURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
 
-  window.clubTemplateApi = { javaURI, pythonURI, fetchOptions };
+  window.clubTemplateApi = { javaURI, pythonURI, fetchOptions, baseurl: '{{site.baseurl}}' };
 </script>
 <script src="{{ '/assets/js/club-template-editor.js' | relative_url }}"></script>
