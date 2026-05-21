@@ -53,62 +53,27 @@ search_exclude: true
       </div>
     </div>
 
-    <div class="club-grid club-grid-primary">
-      {% for club in site.data.school_clubs limit:3 %}
-      {% assign members = club.members | default: 20 | plus: forloop.index | plus: 8 %}
-      {% assign primary_category = club.categories[0] | default: 'Academic' %}
-      <a class="club-card {% if forloop.first %}is-featured{% endif %}" href="{{site.baseurl}}/club-template/" data-category="{{ club.categories | join: ',' }}">
-        {% if forloop.first %}
-        <span class="club-active-badge">ACTIVE</span>
-        {% endif %}
-        <div class="thumb"><img src="{{site.baseurl}}/images/{{ club.image }}" alt="{{ club.image_alt | default: club.name }}"></div>
-        <div class="club-overlay">
-          <div class="club-title-row">
-            <span class="club-name">{{ club.home_label | default: club.name }}</span>
-            <span class="club-kind">{{ primary_category | upcase }}</span>
-          </div>
-          <div class="club-meta-row">
-            <span>{{ members }} members</span>
-            {% if forloop.first %}
-            <span>SAN DIEGO, CA</span>
-            {% endif %}
-          </div>
-        </div>
-      </a>
-      {% endfor %}
-    </div>
+    <div class="club-grid club-grid-primary"></div>
 
     <div class="club-divider"><span>// MORE CLUBS</span></div>
 
-    <div class="club-grid club-grid-more">
-      {% for club in site.data.school_clubs offset:3 %}
-      {% assign members = club.members | default: 18 | plus: forloop.index | plus: 5 %}
-      {% assign primary_category = club.categories[0] | default: 'Academic' %}
-      <a class="club-card" href="{{site.baseurl}}/club-template/" data-category="{{ club.categories | join: ',' }}">
-        <div class="thumb"><img src="{{site.baseurl}}/images/{{ club.image }}" alt="{{ club.image_alt | default: club.name }}"></div>
-        <div class="club-overlay">
-          <div class="club-title-row">
-            <span class="club-name">{{ club.home_label | default: club.name }}</span>
-            <span class="club-kind">{{ primary_category | upcase }}</span>
-          </div>
-          <div class="club-meta-row">
-            <span>{{ members }} members</span>
-            <span>{{ primary_category | upcase }}</span>
-          </div>
-        </div>
-      </a>
-      {% endfor %}
-    </div>
+    <div class="club-grid club-grid-more"></div>
 
     <div id="no-clubs" class="no-clubs-msg">No clubs in this category yet!</div>
   </main>
 </section>
 
 <script type="module">
-  import { pythonURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
+  import { pythonURI, javaURI, fetchOptions } from "{{site.baseurl}}/assets/js/api/config.js";
 
   const loggedOutHome = document.getElementById("logged-out-home");
   const loggedInHome = document.getElementById("logged-in-home");
+  const primaryGrid = document.querySelector(".club-grid-primary");
+  const moreGrid = document.querySelector(".club-grid-more");
+  const clubDivider = document.querySelector(".club-divider");
+  const noClubsMsg = document.getElementById("no-clubs");
+  const fallbackClubs = {{ site.data.school_clubs | jsonify }};
+  let clubCards = [];
 
   async function isLoggedIn() {
     if (localStorage.getItem('forceLoggedOut') === '1') {
@@ -125,10 +90,147 @@ search_exclude: true
     }
   }
 
+  function normalizeClub(club, index) {
+    const categories = Array.isArray(club?.categories)
+      ? club.categories.map((value) => String(value).trim()).filter(Boolean)
+      : [];
+    const name = String(club?.name || club?.home_label || `Club ${index + 1}`).trim();
+    const image = String(club?.image || "").trim();
+    const memberCount = club?.members ?? club?.memberCount ?? club?.member_count ?? null;
+
+    return {
+      id: club?.id ?? club?.slug ?? `club-${index + 1}`,
+      name,
+      categories,
+      image,
+      imageAlt: String(club?.image_alt || name).trim(),
+      membersText: memberCount !== null && String(memberCount).trim() !== ""
+        ? `${memberCount} members`
+        : (categories.length ? `${categories.length} categories` : "No categories"),
+    };
+  }
+
+  function imageToUrl(image) {
+    const value = String(image || "").trim();
+    if (!value) {
+      return "{{site.baseurl}}/images/default.png";
+    }
+
+    if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("data:")) {
+      return value;
+    }
+
+    const cleanValue = value.replace(/^\/+/, "");
+    if (cleanValue.startsWith("images/")) {
+      return `{{site.baseurl}}/${cleanValue}`;
+    }
+
+    return `{{site.baseurl}}/images/${cleanValue}`;
+  }
+
+  function createClubCard(club, index, isFeatured = false) {
+    const card = document.createElement("a");
+    card.className = `club-card${isFeatured ? " is-featured" : ""}`;
+    card.href = `${"{{site.baseurl}}/club-template/"}${club.id ? `?id=${encodeURIComponent(String(club.id))}` : ""}`;
+    card.dataset.category = club.categories.join(",");
+
+    if (isFeatured) {
+      const badge = document.createElement("span");
+      badge.className = "club-active-badge";
+      badge.textContent = "ACTIVE";
+      card.appendChild(badge);
+    }
+
+    const thumb = document.createElement("div");
+    thumb.className = "thumb";
+    const img = document.createElement("img");
+    img.src = imageToUrl(club.image);
+    img.alt = club.imageAlt;
+    thumb.appendChild(img);
+
+    const overlay = document.createElement("div");
+    overlay.className = "club-overlay";
+
+    const titleRow = document.createElement("div");
+    titleRow.className = "club-title-row";
+    const name = document.createElement("span");
+    name.className = "club-name";
+    name.textContent = club.name;
+    const kind = document.createElement("span");
+    kind.className = "club-kind";
+    kind.textContent = (club.categories[0] || "Club").toUpperCase();
+    titleRow.appendChild(name);
+    titleRow.appendChild(kind);
+
+    const metaRow = document.createElement("div");
+    metaRow.className = "club-meta-row";
+    const firstMeta = document.createElement("span");
+    firstMeta.textContent = club.membersText;
+    const secondMeta = document.createElement("span");
+    secondMeta.textContent = isFeatured ? "FEATURED CLUB" : (club.categories[1] || "OPEN TO JOIN").toUpperCase();
+    metaRow.appendChild(firstMeta);
+    metaRow.appendChild(secondMeta);
+
+    overlay.appendChild(titleRow);
+    overlay.appendChild(metaRow);
+
+    card.appendChild(thumb);
+    card.appendChild(overlay);
+    return card;
+  }
+
+  function renderClubs(clubs) {
+    const normalized = clubs.map(normalizeClub);
+    const primaryClubs = normalized.slice(0, 3);
+    const moreClubs = normalized.slice(3);
+
+    primaryGrid.innerHTML = "";
+    moreGrid.innerHTML = "";
+
+    primaryClubs.forEach((club, index) => {
+      primaryGrid.appendChild(createClubCard(club, index, index === 0));
+    });
+
+    moreClubs.forEach((club, index) => {
+      moreGrid.appendChild(createClubCard(club, index + 3, false));
+    });
+
+    clubCards = Array.from(document.querySelectorAll(".club-card"));
+    if (clubDivider) {
+      clubDivider.style.display = clubCards.length > 3 ? "flex" : "none";
+    }
+
+    if (noClubsMsg) {
+      noClubsMsg.style.display = clubCards.length === 0 ? "block" : "none";
+    }
+  }
+
+  async function loadClubs() {
+    try {
+      const response = await fetch(`${javaURI}/api/clubs`, fetchOptions);
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return Array.isArray(fallbackClubs) ? fallbackClubs : [];
+    }
+  }
+
   const authenticated = await isLoggedIn();
   if (authenticated) {
     loggedOutHome.style.display = "none";
     loggedInHome.style.display = "grid";
+
+    const clubs = await loadClubs();
+    renderClubs(clubs);
+
+    if (clubs.length === 0 && noClubsMsg) {
+      noClubsMsg.textContent = "No clubs were returned from the backend.";
+      noClubsMsg.style.display = "block";
+    }
   } else {
     loggedOutHome.style.display = "block";
     loggedInHome.style.display = "none";
@@ -137,9 +239,7 @@ search_exclude: true
   // Club filtering functionality
   function initClubFilter() {
     const chips = document.querySelectorAll('.filter-chip');
-    const clubDivider = document.querySelector('.club-divider');
-    const noClubsMsg = document.getElementById('no-clubs');
-    const clubCards = document.querySelectorAll('.club-card');
+    const activeClubCards = () => Array.from(document.querySelectorAll('.club-card'));
 
     function clubMatchesFilter(card, filterValue) {
       if (filterValue === 'ALL') return true;
@@ -150,7 +250,7 @@ search_exclude: true
     function filterClubs(filterValue) {
       let visibleCount = 0;
 
-      clubCards.forEach(card => {
+      activeClubCards().forEach(card => {
         if (clubMatchesFilter(card, filterValue)) {
           card.classList.remove('hidden');
           visibleCount += 1;
@@ -163,7 +263,9 @@ search_exclude: true
         clubDivider.style.display = visibleCount > 3 ? 'flex' : 'none';
       }
 
-      noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+      if (noClubsMsg) {
+        noClubsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+      }
     }
 
     chips.forEach(chip => {
