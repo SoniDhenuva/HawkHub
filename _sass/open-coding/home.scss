@@ -13,7 +13,17 @@
   max-width: none !important;
 }
 
+article.post:has(#logged-out-home),
+article.post:has(#logged-in-home) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
 #logged-out-home {
+  --hawk-shell-bg: #040c18;
+  --hawk-checker-line: rgba(0, 216, 255, 0.11);
+  --hawk-checker-opacity: 0.38;
   min-height: 100vh;
   width: 100vw;
   margin-left: calc(50% - 50vw);
@@ -23,8 +33,8 @@
   font-family: "Orbitron", "Exo 2", sans-serif;
   background:
     radial-gradient(circle at 82% 18%, rgba(0, 216, 255, 0.14), transparent 34%),
-    radial-gradient(circle at 12% 88%, rgba(0, 240, 139, 0.12), transparent 30%),
-    linear-gradient(180deg, #02060d 0%, #031022 58%, #071a31 100%);
+    radial-gradient(circle at 12% 88%, rgba(0, 240, 139, 0.1), transparent 30%),
+    linear-gradient(180deg, #02060d 0%, #041121 58%, #07182d 100%);
 }
 
 #logged-out-home::before {
@@ -32,11 +42,15 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0, 216, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 216, 255, 0.08) 1px, transparent 1px);
-  background-size: 52px 52px;
-  opacity: 0.3;
+    linear-gradient(var(--hawk-checker-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--hawk-checker-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: var(--hawk-checker-opacity);
   pointer-events: none;
+}
+
+#logged-out-home::after {
+  content: none;
 }
 
 .welcome-center {
@@ -53,15 +67,36 @@
 .welcome-panel {
   width: min(92vw, 780px);
   min-height: 350px;
-  background: linear-gradient(145deg, rgba(2, 11, 33, 0.82), rgba(2, 8, 24, 0.76));
+  background:
+    linear-gradient(145deg, rgba(3, 16, 39, 0.88), rgba(2, 10, 27, 0.82)),
+    linear-gradient(90deg, rgba(0, 216, 255, 0.04), rgba(0, 240, 139, 0.03));
   border: 1px solid rgba(0, 216, 255, 0.32);
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(0, 240, 139, 0.12);
-  border-radius: 10px;
+  border-radius: 18px;
   padding: 2.4rem 2.2rem;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 216, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 216, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.welcome-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .welcome-overline {
@@ -114,9 +149,9 @@
 
 .home-shell {
   --hawk-shell-bg: var(--cyber-bg-0, #030303);
-  --hawk-checker-line: rgba(185, 185, 185, 0.14);
-  --hawk-checker-opacity: 0.33;
-  --hawk-panel-bg: rgba(3, 3, 3, 0.78);
+  --hawk-checker-line: rgba(0, 216, 255, 0.12);
+  --hawk-checker-opacity: 0.4;
+  --hawk-panel-bg: rgba(3, 10, 24, 0.18);
   --hawk-panel-border: rgba(170, 170, 170, 0.2);
   min-height: 100vh;
   width: 100vw;
@@ -139,6 +174,10 @@
   pointer-events: none;
 }
 
+.home-shell::after {
+  content: none;
+}
+
 .home-sidebar,
 .home-main {
   position: relative;
@@ -149,6 +188,7 @@
   background: var(--hawk-panel-bg);
   border-right: 1px solid var(--hawk-panel-border);
   padding: 1.5rem 1rem;
+  backdrop-filter: none;
 }
 
 .home-sidebar h2 {
@@ -223,6 +263,8 @@
 
 .home-main {
   padding: 2.3rem 2.4rem;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .home-main-header {

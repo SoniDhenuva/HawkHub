@@ -1,138 +1,146 @@
 (function () {
   const questionSets = [
     {
-      id: "subjects",
-      prompt: "Favorite subjects",
+      id: "grade",
+      shortLabel: "Grade",
+      icon: "✦",
+      eyebrow: "Welcome",
+      prompt: "What grade are you in?",
       minSelect: 1,
-      options: ["math", "science", "coding", "design", "english", "history", "business", "community"]
+      maxSelect: 1,
+      options: [
+        { value: "9", label: "9th Grade" },
+        { value: "10", label: "10th Grade" },
+        { value: "11", label: "11th Grade" },
+        { value: "12", label: "12th Grade" }
+      ]
+    },
+    {
+      id: "subjects",
+      shortLabel: "Topics",
+      icon: "⚡",
+      eyebrow: "Interest Survey",
+      prompt: "What topics do you naturally enjoy?",
+      minSelect: 1,
+      options: [
+        { value: "math", label: "Math / logic" },
+        { value: "science", label: "Science / health" },
+        { value: "coding", label: "Coding / tech" },
+        { value: "design", label: "Design / media" },
+        { value: "english", label: "Writing / speaking" },
+        { value: "history", label: "History / law" },
+        { value: "business", label: "Business / leadership" },
+        { value: "community", label: "Community impact" }
+      ]
     },
     {
       id: "activities",
-      prompt: "Preferred activities",
+      shortLabel: "Activities",
+      icon: "☄",
+      eyebrow: "Interest Survey",
+      prompt: "How do you like spending your time?",
       minSelect: 1,
-      options: ["build", "compete", "create", "lead", "research", "perform", "mentor", "organize"]
+      options: [
+        { value: "build", label: "Building things" },
+        { value: "research", label: "Research / analysis" },
+        { value: "compete", label: "Competition" },
+        { value: "create", label: "Creative projects" },
+        { value: "perform", label: "Speaking / performing" },
+        { value: "organize", label: "Planning events" },
+        { value: "mentor", label: "Mentoring people" },
+        { value: "lead", label: "Leading teams" }
+      ]
     },
     {
       id: "vibes",
-      prompt: "Club vibes",
+      shortLabel: "Vibe",
+      icon: "⬢",
+      eyebrow: "Interest Survey",
+      prompt: "What kind of club energy fits you?",
       minSelect: 1,
-      options: ["competitive", "collaborative", "creative", "technical", "social", "academic"]
+      options: [
+        { value: "technical", label: "Technical" },
+        { value: "collaborative", label: "Collaborative" },
+        { value: "competitive", label: "Competitive" },
+        { value: "creative", label: "Creative" },
+        { value: "social", label: "Social" },
+        { value: "academic", label: "Academic / structured" }
+      ]
     }
   ];
 
-  const categoryTagMap = {
-    "STEM": ["coding", "math", "science", "build", "research"],
-    "Competition": ["compete", "fast-paced", "structured"],
-    "Charity/Volunteer": ["community", "impact", "mentor", "lead"],
-    "Advocacy/Awareness": ["impact", "community", "lead"],
-    "Cultural/Society": ["social", "perform", "community", "create"],
-    "Arts": ["design", "create", "perform"],
-    "Interest/Sport": ["social", "hands-on", "fast-paced"]
-  };
-
-  function inferTagsFromCategories(categories) {
-    const inferred = [];
-
-    (categories || []).forEach((category) => {
-      const tags = categoryTagMap[category] || [];
-      tags.forEach((tag) => {
-        if (!inferred.includes(tag)) {
-          inferred.push(tag);
-        }
-      });
-    });
-
-    return inferred;
-  }
-
-  const schoolClubs = Array.isArray(window.HAWKHUB_SCHOOL_CLUBS) ? window.HAWKHUB_SCHOOL_CLUBS : [];
-
-  const clubs = schoolClubs.length
-    ? schoolClubs.map((club) => {
-        const categories = Array.isArray(club.categories) ? club.categories : [];
-        const fallbackSummary = categories.length
-          ? `School club focused on ${categories.join(", ").toLowerCase()}.`
-          : "School club profile.";
-
-        return {
-          id: club.id || club.name,
-          name: club.name,
-          summary: club.summary || fallbackSummary,
-          tags: Array.isArray(club.tags) && club.tags.length ? club.tags : inferTagsFromCategories(categories),
-          href: club.href || "/search",
-          image: club.image || "default.png"
-        };
-      })
-    : [
-        {
-          id: "robotics",
-          name: "Robotics",
-          summary: "Design, build, and test bots for real competitions.",
-          tags: ["coding", "science", "build", "compete", "hands-on", "fast-paced"],
-          href: "/search",
-          image: "clubs/optix.png"
-        }
-      ];
-
   const state = {
     selections: {
+      grade: new Set(),
       subjects: new Set(),
       activities: new Set(),
       vibes: new Set()
-    }
+    },
+    currentStep: 0
   };
 
   const elements = {
+    survey: document.getElementById("recommendationSurvey"),
     questions: document.getElementById("recommendationQuestions"),
+    stepLabel: document.getElementById("recommendationStepLabel"),
+    stepEyebrow: document.getElementById("recommendationStepEyebrow"),
+    stepCounter: document.getElementById("recommendationStepCounter"),
+    stepPrompt: document.getElementById("recommendationStepPrompt"),
+    stepIcons: document.getElementById("recommendationStepIcons"),
+    progressSteps: document.getElementById("recommendationProgressSteps"),
+    back: document.getElementById("recommendationBack"),
+    next: document.getElementById("recommendationNext"),
     submit: document.getElementById("recommendationSubmit"),
     reset: document.getElementById("recommendationReset"),
     validation: document.getElementById("recommendationValidation"),
     results: document.getElementById("recommendationResults")
   };
 
-  if (!elements.questions || !elements.submit || !elements.reset || !elements.results) {
+  if (
+    !elements.survey
+    || !elements.questions
+    || !elements.stepLabel
+    || !elements.stepEyebrow
+    || !elements.stepCounter
+    || !elements.stepPrompt
+    || !elements.stepIcons
+    || !elements.progressSteps
+    || !elements.back
+    || !elements.next
+    || !elements.submit
+    || !elements.reset
+    || !elements.validation
+    || !elements.results
+  ) {
     return;
   }
 
+  const backendUrl = (window.RECOMMENDATION_BACKEND_URL || "http://127.0.0.1:8587").replace(/\/$/, "");
   const baseUrl = (window.RECOMMENDATION_BASEURL || "").replace(/\/$/, "");
 
-  function imageSrc(fileName) {
-    return `${baseUrl}/images/${fileName}`;
-  }
+  let isSubmitting = false;
 
-  function buildQuestions() {
-    elements.questions.innerHTML = questionSets
-      .map((set) => {
-        const optionsMarkup = set.options
-          .map((option) => {
-            const optionId = `${set.id}-${option}`.replace(/[^a-z0-9-]/gi, "-");
-            return `
-              <label class="recommendation-option" for="${optionId}">
-                <input type="checkbox" id="${optionId}" data-group="${set.id}" data-value="${option}">
-                <span>${option}</span>
-              </label>
-            `;
-          })
-          .join("");
-
-        return `
-          <div class="recommendation-question">
-            <h3>${set.prompt}</h3>
-            <div class="recommendation-options">${optionsMarkup}</div>
-          </div>
-        `;
-      })
-      .join("");
-
-    elements.questions.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
-      checkbox.addEventListener("change", (event) => {
+  function attachOptionHandlers() {
+    elements.questions.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("change", (event) => {
         const target = event.currentTarget;
         const group = target.dataset.group;
         const value = target.dataset.value;
         const chip = target.closest(".recommendation-option");
+        const currentQuestion = questionSets.find((set) => set.id === group);
 
         if (!group || !value || !state.selections[group]) {
           return;
+        }
+
+        if (currentQuestion && currentQuestion.maxSelect === 1) {
+          state.selections[group].clear();
+          elements.questions.querySelectorAll(`input[data-group='${group}']`).forEach((choice) => {
+            const optionChip = choice.closest(".recommendation-option");
+            if (optionChip) {
+              optionChip.classList.remove("recommendation-option-selected");
+            }
+          });
         }
 
         if (target.checked) {
@@ -146,16 +154,105 @@
             chip.classList.remove("recommendation-option-selected");
           }
         }
+
+        elements.validation.textContent = "";
       });
     });
   }
 
-  function validateSelections() {
-    const missing = questionSets.filter((set) => state.selections[set.id].size < set.minSelect);
+  function renderStepIcons() {
+    elements.stepIcons.innerHTML = questionSets
+      .map((set, index) => {
+        const isActive = index === state.currentStep;
+        const isComplete = index < state.currentStep;
+        const classes = ["recsys-step-icon"];
 
-    if (missing.length) {
-      const labels = missing.map((set) => set.prompt.toLowerCase()).join(", ");
-      elements.validation.textContent = `Select at least one option for: ${labels}.`;
+        if (isActive) {
+          classes.push("is-active");
+        } else if (isComplete) {
+          classes.push("is-complete");
+        }
+
+        return `
+          <div class="${classes.join(" ")}" aria-label="${set.shortLabel}">
+            <span>${set.icon}</span>
+          </div>
+        `;
+      })
+      .join("");
+  }
+
+  function renderProgressSteps() {
+    elements.progressSteps.innerHTML = questionSets
+      .map((set, index) => {
+        const classes = ["recsys-progress-step"];
+
+        if (index < state.currentStep) {
+          classes.push("is-complete");
+        } else if (index === state.currentStep) {
+          classes.push("is-active");
+        }
+
+        return `<span class="${classes.join(" ")}" aria-label="${set.shortLabel}"></span>`;
+      })
+      .join("");
+  }
+
+  function renderCurrentStep() {
+    const set = questionSets[state.currentStep];
+    const stepNumber = state.currentStep + 1;
+    const selectedValues = state.selections[set.id];
+    const inputType = set.maxSelect === 1 ? "radio" : "checkbox";
+    const optionsMarkup = set.options
+      .map((option) => {
+        const value = typeof option === "string" ? option : option.value;
+        const label = typeof option === "string" ? option : option.label;
+        const optionId = `${set.id}-${value}`.replace(/[^a-z0-9-]/gi, "-");
+        const selectedClass = selectedValues.has(value) ? " recommendation-option-selected" : "";
+        const checked = selectedValues.has(value) ? " checked" : "";
+
+        return `
+          <label class="recommendation-option${selectedClass}" for="${optionId}">
+            <input type="${inputType}" name="${set.id}" id="${optionId}" data-group="${set.id}" data-value="${value}"${checked}>
+            <span>${label}</span>
+          </label>
+        `;
+      })
+      .join("");
+
+    elements.stepLabel.textContent = `Step ${stepNumber} of ${questionSets.length}`;
+    elements.stepEyebrow.textContent = set.eyebrow || "Interest Survey";
+    elements.stepCounter.textContent = `Step ${stepNumber} of ${questionSets.length}`;
+    elements.stepPrompt.textContent = set.prompt;
+    elements.questions.dataset.step = set.id;
+    elements.questions.innerHTML = `
+      <div class="recommendation-question">
+        <div class="recommendation-options">${optionsMarkup}</div>
+      </div>
+    `;
+
+    attachOptionHandlers();
+    renderStepIcons();
+    renderProgressSteps();
+    updateActionState();
+  }
+
+  function showSurvey() {
+    elements.survey.classList.remove("is-hidden");
+    elements.results.classList.add("is-empty");
+  }
+
+  function showResults() {
+    elements.survey.classList.add("is-hidden");
+    elements.results.classList.remove("is-empty");
+    elements.results.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function validateStep(stepIndex = state.currentStep) {
+    const set = questionSets[stepIndex];
+
+    if (state.selections[set.id].size < set.minSelect) {
+      elements.validation.textContent = `Choose at least ${set.minSelect} option for this step before moving on.`;
       return false;
     }
 
@@ -163,96 +260,75 @@
     return true;
   }
 
+  function validateSelections() {
+    const missing = questionSets.find((set) => state.selections[set.id].size < set.minSelect);
+
+    if (!missing) {
+      elements.validation.textContent = "";
+      return true;
+    }
+
+    state.currentStep = questionSets.findIndex((set) => set.id === missing.id);
+    renderCurrentStep();
+    elements.validation.textContent = `Choose at least ${missing.minSelect} option for this step before getting recommendations.`;
+    return false;
+  }
+
+  function updateActionState() {
+    const atFirstStep = state.currentStep === 0;
+    const atLastStep = state.currentStep === questionSets.length - 1;
+
+    elements.back.disabled = atFirstStep;
+    elements.next.hidden = atLastStep;
+    elements.submit.hidden = !atLastStep;
+    elements.next.textContent = state.currentStep === 0 ? "Get Started" : "Next";
+  }
+
   function flattenSelections() {
-    return Object.values(state.selections).reduce((all, currentSet) => {
-      currentSet.forEach((value) => all.push(value));
+    return ["subjects", "activities", "vibes"].reduce((all, key) => {
+      state.selections[key].forEach((value) => all.push(value));
       return all;
     }, []);
   }
 
-  function scoreClub(selectionVector, club) {
-    const weights = {
-      subjects: 1.3,
-      activities: 1.15,
-      vibes: 1
-    };
+  function renderResults(data) {
+    if (!data.recommendations || data.recommendations.length === 0) {
+      elements.results.innerHTML = '<p class="recsys-placeholder">No club recommendations available from backend.</p>';
+      showResults();
+      return;
+    }
 
-    let score = 0;
-    const matchedTags = [];
+    const best = data.recommendations[0];
+    const topList = data.recommendations.slice(0, 5);
 
-    selectionVector.forEach((item) => {
-      if (club.tags.includes(item)) {
-        matchedTags.push(item);
-
-        if (state.selections.subjects.has(item)) {
-          score += weights.subjects;
-        } else if (state.selections.activities.has(item)) {
-          score += weights.activities;
-        } else {
-          score += weights.vibes;
-        }
-      }
-    });
-
-    score += Math.min(matchedTags.length * 0.18, 0.72);
-
-    return {
-      club,
-      score,
-      matchedTags
-    };
-  }
-
-  function rankClubs() {
-    const selectionVector = flattenSelections();
-
-    return clubs
-      .map((club) => scoreClub(selectionVector, club))
-      .sort((a, b) => b.score - a.score)
-      .map((item, index) => {
-        const maxScore = 6.2;
-        const confidence = Math.max(35, Math.min(98, Math.round((item.score / maxScore) * 100)));
-
-        return {
-          rank: index + 1,
-          confidence,
-          ...item
-        };
-      });
-  }
-
-  function renderResults() {
-    const ranked = rankClubs();
-    const best = ranked[0];
-    const topList = ranked.slice(0, 5);
-
-    const totalSelected = flattenSelections().length;
-
-    const tags = best.matchedTags
+    const tags = best.matched_tags
       .slice(0, 6)
       .map((tag) => `<span class="recommendation-tag">${tag}</span>`)
       .join("");
 
     const topCards = topList
       .map((item) => {
-        const matched = item.matchedTags.slice(0, 4).map((tag) => `<span class="recommendation-tag">${tag}</span>`).join("");
+        const matched = item.matched_tags
+          .slice(0, 4)
+          .map((tag) => `<span class="recommendation-tag">${tag}</span>`)
+          .join("");
 
         return `
           <article class="recommendation-ranked-card">
             <div class="recommendation-ranked-head">
-              <h5>${item.club.name}</h5>
+              <h5>${item.club_name}</h5>
               <span class="recommendation-ranked-rank">Rank #${item.rank}</span>
             </div>
             <div class="recommendation-bar-wrap">
               <div class="recommendation-bar-row">
                 <span>Match</span>
-                <strong>${item.confidence}%</strong>
+                <strong>${item.match_percentage}%</strong>
               </div>
               <div class="recommendation-bar">
-                <div class="recommendation-bar-fill" style="width:${item.confidence}%"></div>
+                <div class="recommendation-bar-fill" style="width:${item.match_percentage}%"></div>
               </div>
             </div>
-            <p>${item.club.summary}</p>
+            <p>${item.summary}</p>
             <div class="recommendation-tags">${matched}</div>
           </article>
         `;
@@ -261,51 +337,132 @@
 
     elements.results.innerHTML = `
       <div class="recommendation-result-header">
-        <h3>Your Ranked Matches</h3>
-        <p>Model run complete using ${totalSelected} selected interests.</p>
+        <div>
+          <p class="recsys-step-label">Results Ready</p>
+          <h3>Your best club matches</h3>
+          <p>Backend model complete. Saved to your profile.</p>
+        </div>
+        <button id="recommendationRetake" type="button" class="recsys-button">Retake Survey</button>
       </div>
       <article class="recommendation-top">
-        <img class="recommendation-top-image" src="${imageSrc(best.club.image)}" alt="${best.club.name}">
-        <div>
-          <h4>#1 Match: ${best.club.name}</h4>
-          <p>${best.club.summary}</p>
+        <img class="recommendation-top-image" src="${baseUrl}/images/${best.image_filename || 'clubs/default.png'}" alt="${best.club_name}">
+        <div class="recommendation-top-copy">
+          <p class="recsys-step-label">Top Match</p>
+          <h4>${best.club_name}</h4>
+          <p>${best.summary}</p>
           <div class="recommendation-bar-wrap">
             <div class="recommendation-bar-row">
               <span>Confidence</span>
-              <strong>${best.confidence}%</strong>
+              <strong>${best.match_percentage}%</strong>
             </div>
             <div class="recommendation-bar">
-              <div class="recommendation-bar-fill" style="width:${best.confidence}%"></div>
+              <div class="recommendation-bar-fill" style="width:${best.match_percentage}%"></div>
             </div>
           </div>
-          <p><a class="recommendation-link" href="${best.club.href.startsWith("http") ? best.club.href : `${baseUrl}${best.club.href}`}" ${best.club.href.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>Explore this club</a></p>
-          <div class="recommendation-tags">${tags || ""}</div>
+          <p><a class="recommendation-link" href="${best.href.startsWith("http") ? best.href : `${baseUrl}${best.href}`}" ${best.href.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>Explore this club</a></p>
+          <div class="recommendation-tags">${tags}</div>
         </div>
       </article>
       <div class="recommendation-rank-grid">${topCards}</div>
     `;
+
+    const retakeButton = document.getElementById("recommendationRetake");
+    if (retakeButton) {
+      retakeButton.addEventListener("click", resetSurvey);
+    }
+
+    showResults();
+  }
+
+  function postToBackend() {
+    if (isSubmitting) return;
+    isSubmitting = true;
+    elements.submit.disabled = true;
+    elements.submit.textContent = "Sending...";
+
+    const username = localStorage.getItem("hawkhub_username") || prompt("Enter your username to save recommendations:");
+    if (!username) {
+      isSubmitting = false;
+      elements.submit.disabled = false;
+      elements.submit.textContent = "Get Recommendations";
+      return;
+    }
+
+    localStorage.setItem("hawkhub_username", username);
+
+    const payload = {
+      username: username,
+      grade: Array.from(state.selections.grade)[0] || "",
+      subjects: Array.from(state.selections.subjects),
+      activities: Array.from(state.selections.activities),
+      vibes: Array.from(state.selections.vibes)
+    };
+
+    fetch(`${backendUrl}/api/recommendations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error(`Backend error: ${resp.status}`);
+        }
+        return resp.json();
+      })
+      .then((data) => {
+        renderResults(data);
+      })
+      .catch((err) => {
+        console.error("Backend POST failed:", err);
+        elements.results.innerHTML = `<p class="recsys-placeholder">Error fetching recommendations. Ensure backend is running at ${backendUrl}</p>`;
+        showResults();
+      })
+      .finally(() => {
+        isSubmitting = false;
+        elements.submit.disabled = false;
+        elements.submit.textContent = "Get Recommendations";
+      });
   }
 
   function resetSurvey() {
     Object.keys(state.selections).forEach((group) => state.selections[group].clear());
-    elements.questions.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
-      checkbox.checked = false;
-      const chip = checkbox.closest(".recommendation-option");
-      if (chip) {
-        chip.classList.remove("recommendation-option-selected");
-      }
-    });
+    state.currentStep = 0;
     elements.validation.textContent = "";
-    elements.results.innerHTML = '<p class="recommendation-placeholder">Run the survey to generate ranked club matches.</p>';
+    elements.results.classList.add("is-empty");
+    elements.results.innerHTML = '<p class="recsys-placeholder">Run the survey to generate ranked club matches.</p>';
+    showSurvey();
+    renderCurrentStep();
   }
 
-  buildQuestions();
+  renderCurrentStep();
+
+  elements.back.addEventListener("click", () => {
+    if (state.currentStep === 0) {
+      return;
+    }
+
+    state.currentStep -= 1;
+    elements.validation.textContent = "";
+    renderCurrentStep();
+  });
+
+  elements.next.addEventListener("click", () => {
+    if (!validateStep()) {
+      return;
+    }
+
+    if (state.currentStep < questionSets.length - 1) {
+      state.currentStep += 1;
+      renderCurrentStep();
+    }
+  });
 
   elements.submit.addEventListener("click", () => {
     if (!validateSelections()) {
       return;
     }
-    renderResults();
+
+    postToBackend();
   });
 
   elements.reset.addEventListener("click", resetSurvey);

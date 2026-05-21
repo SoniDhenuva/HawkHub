@@ -31,10 +31,10 @@ body::before {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(185, 185, 185, 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(185, 185, 185, 0.15) 1px, transparent 1px);
-  background-size: 56px 56px;
-  opacity: 0.28;
+    linear-gradient(rgba(0, 216, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 216, 255, 0.12) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.34;
   z-index: -1;
 }
 

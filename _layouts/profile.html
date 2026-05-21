@@ -94,6 +94,14 @@ active_tab: profile
         </div>
     </div>
 
+    <!-- Your Recommended Clubs Section -->
+    <div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
+        <h2 class="text-xl font-semibold mb-6">Your Recommended Clubs</h2>
+        <div id="profileRecommendationsContainer" style="color: #e8f0ff;">
+            <p style="color: #999; text-align: center; padding: 2rem;">Loading recommendations...</p>
+        </div>
+    </div>
+
     <!-- School Section -->
     <div class="bg-neutral-800 rounded-lg shadow-md p-6 mb-6 border-neutral-700 border">
         <h2 class="text-xl font-semibold mb-6">School Information</h2>
@@ -190,6 +198,8 @@ active_tab: profile
 
 
 </form>
+
+<script src="{{ site.baseurl }}/assets/js/profile-recommendations.js"></script>
 
 <script type="module">
     import { pythonURI, javaURI, fetchOptions } from '{{site.baseurl}}/assets/js/api/config.js';
