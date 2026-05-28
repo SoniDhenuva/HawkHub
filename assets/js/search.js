@@ -52,11 +52,15 @@ function initSearch() {
     var data = (Array.isArray(clubs) ? clubs : []).map(function(club, idx) {
       var categories = Array.isArray(club.categories) ? club.categories : [];
       var tags = Array.isArray(club.tags) ? club.tags : [];
+      var clubId = club.id || ('club-' + idx);
+      var fallbackClubUrl = '/club-template/?id=' + encodeURIComponent(String(clubId));
+      var rawHref = typeof club.href === 'string' ? club.href.trim() : '';
+      var destination = (rawHref && rawHref !== '/search') ? rawHref : fallbackClubUrl;
       return {
-        id: club.id || ('club-' + idx),
+        id: clubId,
         title: club.home_label || club.name || 'Unnamed Club',
         content: [club.summary || '', categories.join(' '), tags.join(' ')].join(' ').trim(),
-        url: '{{ site.baseurl }}' + (club.href || '/'),
+        url: '{{ site.baseurl }}' + destination,
         date: categories[0] || 'Club'
       };
     });

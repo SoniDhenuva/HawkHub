@@ -131,7 +131,12 @@ search_exclude: true
   function createClubCard(club, index, isFeatured = false) {
     const card = document.createElement("a");
     card.className = `club-card${isFeatured ? " is-featured" : ""}`;
-    card.href = `${"{{site.baseurl}}/club-template/"}${club.id ? `?id=${encodeURIComponent(String(club.id))}` : ""}`;
+    const rawHref = String(club.href || "").trim();
+    if (rawHref && rawHref !== "/search") {
+      card.href = rawHref.startsWith("/") ? `{{site.baseurl}}${rawHref}` : rawHref;
+    } else {
+      card.href = `${"{{site.baseurl}}/club-template/"}${club.id ? `?id=${encodeURIComponent(String(club.id))}` : ""}`;
+    }
     card.dataset.category = club.categories.join(",");
 
     if (isFeatured) {

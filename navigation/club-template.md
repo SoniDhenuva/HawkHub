@@ -24,7 +24,7 @@ search_exclude: true
       <a class="home-nav-link is-active" href="{{site.baseurl}}/club-template/">YOUR CLUB</a>
     </div>
 
-    <a class="home-new-club" href="#editor-panel">EDIT CLUB</a>
+    <a id="sidebar-edit-link" class="home-new-club" href="#editor-panel">EDIT CLUB</a>
   </aside>
 
   <main class="home-main club-main">
@@ -135,4 +135,5 @@ search_exclude: true
 
   window.clubTemplateApi = { javaURI, pythonURI, fetchOptions, baseurl: '{{site.baseurl}}' };
 </script>
+<script id="club-template-fallback-clubs" type="application/json">{{ site.data.school_clubs | jsonify }}</script>
 <script src="{{ '/assets/js/club-template-editor.js' | relative_url }}"></script>

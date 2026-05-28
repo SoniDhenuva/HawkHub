@@ -33,6 +33,64 @@
   const joinLink = document.getElementById("join-link");
   const joinNote = document.getElementById("join-note");
   const editorStatus = document.getElementById("editor-status");
+  const sidebarEditLink = document.getElementById("sidebar-edit-link");
+
+  const dummyClubFallbacks = {
+    "optix": {
+      id: "optix",
+      slug: "optix",
+      clubName: "FRC TEAM OPTIX 3749",
+      name: "FRC TEAM OPTIX 3749",
+      tagline: "Build robots, code systems, and compete in high-intensity engineering events.",
+      summary: "Build robots, code systems, and compete in high-intensity engineering events.",
+      categories: ["STEM", "Competition", "All Clubs"],
+      tags: ["coding", "science", "build", "compete", "hands-on", "fast-paced", "structured"],
+      members: "55",
+      frequency: "Weekly (after school)",
+      activity: "High during build and competition season",
+      awards: "Regional placements and outreach recognition",
+      image_alt: "FRC Team Optix 3749",
+      photo1: "images/clubs/optixImages/1.png",
+      photo2: "images/clubs/optixImages/2.png",
+      photo3: "images/clubs/optixImages/3.png",
+      photo4: "images/clubs/optixImages/4.png",
+      social1Label: "Instagram",
+      social1Url: "#",
+      social2Label: "Discord",
+      social2Url: "#",
+      social3Label: "Website",
+      social3Url: "#",
+      joinUrl: "#",
+      joinNote: "Sends a join request for a club admin to approve."
+    },
+    "girls-in-cs": {
+      id: "girls-in-cs",
+      slug: "girls-in-cs",
+      clubName: "Girls In CS",
+      name: "Girls In CS",
+      tagline: "Learn coding collaboratively and build confidence through technical projects.",
+      summary: "Learn coding collaboratively and build confidence through technical projects.",
+      categories: ["STEM", "All Clubs"],
+      tags: ["coding", "math", "science", "build", "create", "social", "impact"],
+      members: "48",
+      frequency: "Weekly",
+      activity: "Active year-round",
+      awards: "Community workshops and mentoring impact",
+      image_alt: "Girls In CS",
+      photo1: "images/clubs/girlsincsImages/1.png",
+      photo2: "images/clubs/girlsincsImages/2.png",
+      photo3: "images/clubs/girlsincsImages/3.png",
+      photo4: "images/clubs/girlsincsImages/4.png",
+      social1Label: "Instagram",
+      social1Url: "#",
+      social2Label: "Discord",
+      social2Url: "#",
+      social3Label: "Website",
+      social3Url: "#",
+      joinUrl: "#",
+      joinNote: "Sends a join request for a club admin to approve."
+    }
+  };
 
   if (!form || !panel || !toggleEditor || !resetButton || !joinLink) {
     return;
@@ -121,9 +179,91 @@
     return String(name || "").trim().toLowerCase();
   }
 
+  function normalizeRole(role) {
+    return String(role || "").trim().toLowerCase();
+  }
+
+  function isAdminUserRole(role) {
+    const normalizedRole = normalizeRole(role);
+    return normalizedRole === "admin" || normalizedRole === "teacher";
+  }
+
   function getCurrentClubId() {
     const params = new URLSearchParams(window.location.search);
-    return (params.get("id") || "").trim();
+    const queryClubId = (params.get("id") || "").trim();
+    if (queryClubId) {
+      return queryClubId;
+    }
+
+    const pathname = String(window.location.pathname || "");
+    if (pathname.includes("/clubs/optix")) {
+      return "optix";
+    }
+
+    if (pathname.includes("/clubs/girls-in-cs")) {
+      return "girls-in-cs";
+    }
+
+    return "";
+  }
+
+  function getFallbackClubsFromPage() {
+    const dataElement = document.getElementById("club-template-fallback-clubs");
+    if (!dataElement) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(dataElement.textContent || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function getDummyFallbackClub(clubId) {
+    const normalizedClubId = normalizeClubName(clubId);
+    return dummyClubFallbacks[normalizedClubId] || null;
+  }
+
+  function applyEditorPermissions(canEdit) {
+    if (toggleEditor) {
+      toggleEditor.hidden = !canEdit;
+      toggleEditor.disabled = !canEdit;
+    }
+
+    if (!canEdit && panel) {
+      panel.hidden = true;
+    }
+
+    if (sidebarEditLink) {
+      sidebarEditLink.hidden = !canEdit;
+      sidebarEditLink.setAttribute("aria-hidden", canEdit ? "false" : "true");
+    }
+  }
+
+  async function detectAdminMode() {
+    const cachedRole = window.user?.role;
+    if (isAdminUserRole(cachedRole)) {
+      return true;
+    }
+
+    const { pythonURI } = getApiConfig();
+    try {
+      const { response, data } = await fetchJson(`${pythonURI}/api/id`);
+      if (!response.ok || !data || typeof data !== "object") {
+        return false;
+      }
+
+      window.user = {
+        ...(window.user || {}),
+        ...data
+      };
+
+      return isAdminUserRole(data.role);
+    } catch {
+      return false;
+    }
   }
 
   function setStatus(message, isError = false) {
@@ -297,6 +437,7 @@
 
   async function loadState() {
     const clubId = getCurrentClubId();
+    const normalizedClubId = normalizeClubName(clubId);
     const { javaURI } = getApiConfig();
 
     if (!clubId) {
@@ -318,7 +459,7 @@
         const club = list.data.find((item) => {
           const itemId = String(item?.id || item?.slug || "").trim();
           const itemName = normalizeClubName(item?.name || item?.home_label || "");
-          return itemId === clubId || itemName === normalizeClubName(clubId);
+          return normalizeClubName(itemId) === normalizedClubId || itemName === normalizedClubId;
         });
 
         if (club) {
@@ -327,6 +468,27 @@
       }
     } catch (error) {
       console.warn("Club list fetch failed:", error);
+    }
+
+    const fallbackClubs = getFallbackClubsFromPage();
+    if (fallbackClubs.length > 0) {
+      const fallbackClub = fallbackClubs.find((item) => {
+        const itemId = String(item?.id || item?.slug || "").trim();
+        const itemName = normalizeClubName(item?.name || item?.home_label || "");
+        return normalizeClubName(itemId) === normalizedClubId || itemName === normalizedClubId;
+      });
+
+      if (fallbackClub) {
+        return normalizeClubRecord({
+          ...fallbackClub,
+          ...getDummyFallbackClub(clubId)
+        });
+      }
+    }
+
+    const dummyClub = getDummyFallbackClub(clubId);
+    if (dummyClub) {
+      return normalizeClubRecord(dummyClub);
     }
 
     return {
@@ -521,18 +683,34 @@
     }
   }
 
+  let canEdit = false;
   let currentState = await loadState();
+  canEdit = await detectAdminMode();
+  applyEditorPermissions(canEdit);
   writeFormData(currentState);
   render(currentState);
   setEditorOpen(false);
-  setStatus(currentState.clubId ? `Loaded ${currentState.clubName} from the backend.` : "Create a new club and save it to the backend.");
+  if (canEdit) {
+    setStatus(currentState.clubId ? `Loaded ${currentState.clubName}. Admin edit mode is enabled.` : "Create a new club and save it to the backend.");
+  } else {
+    setStatus(`Loaded ${currentState.clubName || defaults.clubName}. Preview mode only for student users.`);
+  }
 
   toggleEditor.addEventListener("click", function () {
+    if (!canEdit) {
+      return;
+    }
+
     setEditorOpen(panel.hidden);
   });
 
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    if (!canEdit) {
+      setStatus("Students can preview club pages. Admin mode is required to edit.", true);
+      return;
+    }
 
     try {
       const draft = readFormData();
@@ -573,6 +751,11 @@
   });
 
   resetButton.addEventListener("click", function () {
+    if (!canEdit) {
+      setStatus("Students can preview club pages. Admin mode is required to edit.", true);
+      return;
+    }
+
     currentState = { ...defaults };
     writeFormData(currentState);
     render(currentState);

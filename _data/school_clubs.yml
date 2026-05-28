@@ -4,7 +4,7 @@
   alt: true
   image: clubs/optix.png
   image_alt: FRC Team Optix 3749
-  href: /search
+  href: /clubs/optix/
   categories: [STEM, Competition, All Clubs]
   summary: Build robots, code systems, and compete in high-intensity engineering events.
   tags: [coding, science, build, compete, hands-on, fast-paced, structured]
@@ -59,7 +59,7 @@
   alt: false
   image: clubs/girls_in_cs.png
   image_alt: Girls In CS
-  href: /search
+  href: /clubs/girls-in-cs/
   categories: [STEM, All Clubs]
   summary: Learn coding collaboratively and build confidence through technical projects.
   tags: [coding, math, science, build, create, social, impact]
