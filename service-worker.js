@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ocs-pwa-v1';
+const CACHE_NAME = 'ocs-pwa-v2';
 const OFFLINE_URL = '/mobile/';
 
 const PRECACHE_ASSETS = [
@@ -33,6 +33,27 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/assets/js/api/')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (!response || response.status !== 200 || response.type !== 'basic') return response;
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          return response;
+        })
+        .catch(() => caches.match(request).then((cached) => cached || caches.match(OFFLINE_URL)))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(request).then((cached) => {

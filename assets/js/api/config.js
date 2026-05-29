@@ -24,7 +24,7 @@ if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
 export const fetchOptions = {
     method: 'GET',  // Default method is GET
     mode: 'cors', // Enable CORS (Cross-Origin Resource Sharing)
-    cache: 'default', // Default caching behavior
+    cache: 'no-store', // Authenticated API calls should reflect the current cookie/session
     credentials: 'include', // Include credentials (cookies, etc.)
     headers: {
         'Content-Type': 'application/json',
