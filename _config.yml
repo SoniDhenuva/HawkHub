@@ -58,7 +58,7 @@ exclude:
 # sass:
 #   quiet_deps: true
 #   silence_deprecations: [import]
-incremental: true
+incremental: false
 
 remote_theme: jekyll/minima
 plugins:
