@@ -1,4 +1,4 @@
-import { baseurl, pythonURI, fetchOptions } from './config.js';
+import { baseurl, pythonURI, javaURI, fetchOptions } from './config.js';
 
 console.log("login.js loaded");
 
@@ -137,9 +137,8 @@ function waitForElement(selector, maxAttempts = 20, interval = 100) {
     });
 }
 
-function getCredentials(baseurl) {
-    const URL = `${pythonURI}/api/id?ts=${Date.now()}`;
-    const requestOptions = {
+async function getCredentials(baseurl) {
+    const noCache = {
         ...fetchOptions,
         cache: 'no-store',
         headers: {
@@ -149,24 +148,47 @@ function getCredentials(baseurl) {
         }
     };
 
-    return fetch(URL, requestOptions)
-        .then(response => {
-            if (!response.ok) {
-                console.warn("HTTP status code: " + response.status);
-                return null;
+    // Try Java first — it's the authoritative source for who holds the JWT
+    try {
+        const res = await fetch(`${javaURI}/api/person/get`, noCache);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.name) {
+                console.log("User data (Java):", data);
+                // Also try to get richer profile from Flask, but don't block on it
+                try {
+                    const flaskRes = await fetch(`${pythonURI}/api/id?ts=${Date.now()}`, noCache);
+                    if (flaskRes.ok) {
+                        const flaskData = await flaskRes.json();
+                        // Only use Flask data if it matches the Java uid (same logged-in user)
+                        if (flaskData && flaskData.uid === data.uid) {
+                            console.log("User data enriched from Flask:", flaskData);
+                            return flaskData;
+                        }
+                    }
+                } catch { /* ignore Flask errors */ }
+                return { name: data.name, uid: data.uid, roles: data.roles || [] };
             }
-            return response.json();
-        })
-        .then(data => {
-            if (data === null) return null;
-            console.log("User data:", data);
-            return data;
-        })
-        .catch(err => {
-            console.error("Fetch error: ", err);
-            // Return null instead of throwing to handle the error gracefully
-            return null;
-        });
+        }
+    } catch (err) {
+        console.warn("Java /api/person/get error:", err);
+    }
+
+    // Fallback: try Flask only
+    try {
+        const res = await fetch(`${pythonURI}/api/id?ts=${Date.now()}`, noCache);
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.name) {
+                console.log("User data (Flask fallback):", data);
+                return data;
+            }
+        }
+    } catch (err) {
+        console.warn("Flask /api/id error:", err);
+    }
+
+    return null;
 }
 
 // Update navigation based on login status and courses
