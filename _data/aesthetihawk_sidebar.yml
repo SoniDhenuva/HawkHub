@@ -26,7 +26,13 @@
       url: /student/club-feed
       icon: |
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m0 0h6M6 12a6 6 0 11 0 0 6 6 0 010-12z"/>
+              d="M3 5h18M3 10h18M3 15h18M3 20h18"/>
+    - id: create-post
+      title: Create Post
+      url: /student/club-feed?create=1
+      icon: |
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 4v16m8-8H4"/>
     - id: calendar
       title: Calendar
       url: /student/calendar
