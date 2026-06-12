@@ -80,14 +80,18 @@ search_exclude: true
       return false;
     }
 
-    try {
-      const response = await fetch(`${pythonURI}/api/id`, fetchOptions);
-      if (!response.ok) return false;
-      const data = await response.json();
-      return Boolean(data && (data.uid || data.name));
-    } catch {
-      return false;
-    }
+    const [flaskRes, springRes] = await Promise.allSettled([
+      fetch(`${pythonURI}/api/id`, fetchOptions)
+        .then(r => { if (!r.ok) throw new Error('flask auth failed'); return r.json(); })
+        .then(data => Boolean(data && (data.uid || data.name))),
+      fetch(`${javaURI}/api/person/get`, fetchOptions)
+        .then(r => { if (!r.ok) throw new Error('spring auth failed'); return r.json(); })
+        .then(data => Boolean(data && (data.uid || data.name))),
+    ]);
+
+    const flaskOk  = flaskRes.status  === 'fulfilled' && flaskRes.value  === true;
+    const springOk = springRes.status === 'fulfilled' && springRes.value === true;
+    return flaskOk || springOk;
   }
 
   function normalizeClub(club, index) {
