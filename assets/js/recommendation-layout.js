@@ -66,15 +66,64 @@
         { value: "social", label: "Social" },
         { value: "academic", label: "Academic / structured" }
       ]
+    },
+    {
+      id: "commitment",
+      shortLabel: "Time",
+      icon: "◉",
+      eyebrow: "Personalize",
+      prompt: "How much time can you commit each week?",
+      minSelect: 1,
+      maxSelect: 1,
+      options: [
+        { value: "casual", label: "Casual (1–2 hrs)" },
+        { value: "regular", label: "Regular (3–5 hrs)" },
+        { value: "intensive", label: "Intensive (6+ hrs)" },
+        { value: "flexible", label: "Flexible schedule" }
+      ]
+    },
+    {
+      id: "passion",
+      shortLabel: "Passion",
+      icon: "★",
+      eyebrow: "Personalize",
+      prompt: "What drives you most? Pick your top motivations.",
+      minSelect: 1,
+      options: [
+        { value: "winning", label: "Winning & competing" },
+        { value: "helping", label: "Helping others" },
+        { value: "making", label: "Building & creating" },
+        { value: "learning", label: "Learning & research" },
+        { value: "expressing", label: "Performing & expressing" },
+        { value: "leading", label: "Leading teams" }
+      ]
     }
   ];
+
+  const COMMITMENT_VIBE_MAP = {
+    casual: ['social'],
+    regular: ['collaborative'],
+    intensive: ['competitive', 'technical'],
+    flexible: ['collaborative'],
+  };
+
+  const PASSION_ACTIVITY_MAP = {
+    winning: ['compete'],
+    helping: ['mentor'],
+    making: ['build', 'create'],
+    learning: ['research'],
+    expressing: ['perform'],
+    leading: ['lead', 'organize'],
+  };
 
   const state = {
     selections: {
       grade: new Set(),
       subjects: new Set(),
       activities: new Set(),
-      vibes: new Set()
+      vibes: new Set(),
+      commitment: new Set(),
+      passion: new Set()
     },
     currentStep: 0
   };
@@ -390,12 +439,22 @@
 
     localStorage.setItem("hawkhub_username", username);
 
+    // Merge commitment → vibes and passion → activities
+    const mergedVibes = new Set([...state.selections.vibes]);
+    for (const c of state.selections.commitment) {
+      (COMMITMENT_VIBE_MAP[c] || []).forEach((v) => mergedVibes.add(v));
+    }
+    const mergedActivities = new Set([...state.selections.activities]);
+    for (const p of state.selections.passion) {
+      (PASSION_ACTIVITY_MAP[p] || []).forEach((a) => mergedActivities.add(a));
+    }
+
     const payload = {
       username: username,
       grade: Array.from(state.selections.grade)[0] || "",
       subjects: Array.from(state.selections.subjects),
-      activities: Array.from(state.selections.activities),
-      vibes: Array.from(state.selections.vibes)
+      activities: Array.from(mergedActivities),
+      vibes: Array.from(mergedVibes)
     };
 
     fetch(`${backendUrl}/api/recommendations`, {
@@ -410,6 +469,23 @@
         return resp.json();
       })
       .then((data) => {
+        // Cache in localStorage so the home page can show the recommended row instantly
+        if (data.recommendations && data.recommendations.length > 0) {
+          try {
+            localStorage.setItem("hawkhub_recommendations", JSON.stringify(data.recommendations));
+          } catch {}
+
+          // Backup to Spring (best-effort, no retry)
+          const javaUrl = (window.RECOMMENDATION_JAVA_URL || "").replace(/\/$/, "");
+          if (javaUrl) {
+            fetch(`${javaUrl}/api/recommendations`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ recommendations: data.recommendations })
+            }).catch(() => {});
+          }
+        }
         renderResults(data);
       })
       .catch((err) => {
@@ -430,6 +506,7 @@
     elements.validation.textContent = "";
     elements.results.classList.add("is-empty");
     elements.results.innerHTML = '<p class="recsys-placeholder">Run the survey to generate ranked club matches.</p>';
+    localStorage.removeItem("hawkhub_recommendations");
     showSurvey();
     renderCurrentStep();
   }

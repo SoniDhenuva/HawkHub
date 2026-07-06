@@ -39,6 +39,11 @@ search_exclude: true
   </aside>
 
   <main class="home-main">
+    <section id="rec-section" style="display:none">
+      <div class="club-divider"><span>// RECOMMENDED FOR YOU</span></div>
+      <div id="recGrid" class="club-grid rec-grid"></div>
+    </section>
+
     <div class="home-main-header">
       <h3 class="home-main-title"><span class="home-title-dot"></span> ALL CLUBS</h3>
       <div class="home-filter-bar" role="group" aria-label="Filter clubs">
@@ -132,7 +137,7 @@ search_exclude: true
     return `{{site.baseurl}}/images/${cleanValue}`;
   }
 
-  function createClubCard(club, index, isFeatured = false) {
+  function createClubCard(club, index, isFeatured = false, matchPercent = null) {
     const card = document.createElement("a");
     card.className = `club-card${isFeatured ? " is-featured" : ""}`;
     const rawHref = String(club.href || "").trim();
@@ -147,6 +152,13 @@ search_exclude: true
       const badge = document.createElement("span");
       badge.className = "club-active-badge";
       badge.textContent = "ACTIVE";
+      card.appendChild(badge);
+    }
+
+    if (matchPercent !== null) {
+      const badge = document.createElement("span");
+      badge.className = "club-match-badge";
+      badge.textContent = `${matchPercent}% MATCH`;
       card.appendChild(badge);
     }
 
@@ -228,12 +240,76 @@ search_exclude: true
     }
   }
 
+  async function loadRecommendedClubs() {
+    // 1. Try localStorage (instant — set after completing the survey)
+    try {
+      const cached = localStorage.getItem("hawkhub_recommendations");
+      if (cached) {
+        const recs = JSON.parse(cached);
+        if (Array.isArray(recs) && recs.length > 0) return recs;
+      }
+    } catch {}
+
+    const username = localStorage.getItem("hawkhub_username");
+    if (!username) return [];
+
+    // 2. Try Flask
+    try {
+      const r = await fetch(`${pythonURI}/api/recommendations/${username}`, fetchOptions);
+      if (r.ok) {
+        const data = await r.json();
+        if (Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+          localStorage.setItem("hawkhub_recommendations", JSON.stringify(data.recommendations));
+          return data.recommendations;
+        }
+      }
+    } catch {}
+
+    // 3. Try Spring
+    try {
+      const r = await fetch(`${javaURI}/api/recommendations/${username}`, fetchOptions);
+      if (r.ok) {
+        const data = await r.json();
+        if (Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+          localStorage.setItem("hawkhub_recommendations", JSON.stringify(data.recommendations));
+          return data.recommendations;
+        }
+      }
+    } catch {}
+
+    return [];
+  }
+
+  function renderRecommendedSection(recs) {
+    if (!recs || recs.length === 0) return;
+    const recSection = document.getElementById("rec-section");
+    const recGrid = document.getElementById("recGrid");
+    if (!recSection || !recGrid) return;
+
+    recGrid.innerHTML = "";
+    recs.slice(0, 5).forEach((rec, i) => {
+      const club = {
+        id: rec.club_id,
+        name: rec.club_name,
+        categories: [],
+        image: rec.image_filename || "",
+        imageAlt: rec.club_name,
+        membersText: Array.isArray(rec.matched_tags) ? rec.matched_tags.slice(0, 3).join(", ") : "",
+        href: rec.href || "",
+      };
+      recGrid.appendChild(createClubCard(club, i, false, rec.match_percentage));
+    });
+
+    recSection.style.display = "block";
+  }
+
   const authenticated = await isLoggedIn();
   if (authenticated) {
     loggedOutHome.style.display = "none";
     loggedInHome.style.display = "grid";
 
-    const clubs = await loadClubs();
+    const [clubs, recs] = await Promise.all([loadClubs(), loadRecommendedClubs()]);
+    renderRecommendedSection(recs);
     renderClubs(clubs);
 
     if (clubs.length === 0 && noClubsMsg) {

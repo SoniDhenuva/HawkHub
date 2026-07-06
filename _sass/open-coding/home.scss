@@ -332,7 +332,8 @@ article.post:has(#logged-in-home) {
   margin-bottom: 1rem;
 }
 
-.club-grid-more {
+.club-grid-more,
+.rec-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -407,6 +408,21 @@ article.post:has(#logged-in-home) {
   letter-spacing: 0.12em;
   padding: 0.18rem 0.36rem;
   font-family: "Orbitron", sans-serif;
+}
+
+.club-match-badge {
+  position: absolute;
+  top: 0.55rem;
+  left: 0.6rem;
+  z-index: 2;
+  color: #00d8ff;
+  border: 1px solid rgba(0, 216, 255, 0.62);
+  background: rgba(0, 40, 80, 0.72);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  padding: 0.18rem 0.4rem;
+  font-family: "Orbitron", sans-serif;
+  box-shadow: 0 0 10px rgba(0, 216, 255, 0.28);
 }
 
 .club-card .thumb {

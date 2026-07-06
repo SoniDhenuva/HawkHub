@@ -29,7 +29,7 @@ layout: opencs
           <div>
             <p class="recsys-kicker">Club Finder</p>
             <h1 class="recsys-title">Find your perfect club.</h1>
-            <p class="recsys-description">Take the 4-step survey, click the choices that fit you, and get ranked club recommendations.</p>
+            <p class="recsys-description">Take the short survey, click the choices that fit you, and get ranked club recommendations.</p>
           </div>
           <div class="recsys-header-progress">
             <div id="recommendationProgressSteps" class="recsys-progress-steps" aria-label="Survey progress"></div>
@@ -71,6 +71,7 @@ layout: opencs
 <script>
   window.RECOMMENDATION_BASEURL = "{{ site.baseurl }}";
   window.RECOMMENDATION_BACKEND_URL = "{{ site.recommendation_backend_url | default: 'http://127.0.0.1:8587' }}";
+  window.RECOMMENDATION_JAVA_URL = "{{ site.java_backend_url | default: 'http://127.0.0.1:8085' }}";
   const schoolClubsJsonElement = document.getElementById("school-clubs-json");
   window.HAWKHUB_SCHOOL_CLUBS = schoolClubsJsonElement ? JSON.parse(schoolClubsJsonElement.textContent || "[]") : [];
 </script>

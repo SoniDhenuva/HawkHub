@@ -9,6 +9,10 @@
 
 .recsys-shell .home-main {
   padding: 2rem 2.1rem 2.4rem;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .recsys-stack {
@@ -359,9 +363,10 @@
   grid-template-columns: 160px 1fr;
   align-items: start;
   background: linear-gradient(180deg, rgba(4, 22, 42, 0.94), rgba(5, 18, 34, 0.84));
-  border: 1px solid rgba(0, 216, 255, 0.22);
+  border: 1px solid rgba(0, 240, 139, 0.42);
   border-radius: 22px;
   padding: 1rem;
+  box-shadow: 0 0 20px rgba(0, 240, 139, 0.1), 0 14px 36px rgba(1, 9, 20, 0.22);
 }
 
 .recsys-shell .recommendation-top-copy {
@@ -407,6 +412,7 @@
 .recsys-shell .recommendation-bar-fill {
   height: 100%;
   background: linear-gradient(90deg, #6dddff, var(--recsys-accent));
+  box-shadow: 0 0 8px rgba(0, 216, 255, 0.55);
 }
 
 .recsys-shell .recommendation-rank-grid {
@@ -419,6 +425,12 @@
   padding: 1rem;
   background: linear-gradient(180deg, rgba(7, 24, 44, 0.9), rgba(5, 17, 31, 0.8));
   border-radius: 18px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recsys-shell .recommendation-ranked-card:hover {
+  border-color: rgba(0, 216, 255, 0.65);
+  box-shadow: 0 0 16px rgba(0, 216, 255, 0.18), 0 0 0 1px rgba(0, 216, 255, 0.3);
 }
 
 .recsys-shell .recommendation-tag {
